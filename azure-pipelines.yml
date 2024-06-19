@@ -2,7 +2,16 @@ trigger:
 - main
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    env:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: SA_PASSWORD
+    ports:
+    - 1433:1433
 
 steps:
 - task: UseDotNet@2
@@ -10,14 +19,14 @@ steps:
     packageType: 'sdk'
     version: '6.0.423'
 
-- task: DockerInstaller@0
-  inputs:
-    dockerVersion: '17.09.0-ce'
+# - task: DockerInstaller@0
+#   inputs:
+#     dockerVersion: '17.09.0-ce'
 
-- script: |
-    docker pull mcr.microsoft.com/mssql/server:2022-latest
-    docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=SA_PASSWORD' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
-  displayName: 'Run SQL Server Linux container'
+# - script: |
+#     docker pull mcr.microsoft.com/mssql/server:2022-latest
+#     docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=SA_PASSWORD' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+#   displayName: 'Run SQL Server Linux container'
 
 - task: DotNetCoreCLI@2
   inputs:
