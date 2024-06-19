@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MvcMovie.Controllers;
 using MvcMovie.Data;
 using MvcMovie.Models;
@@ -18,7 +16,7 @@ namespace MvcMovie.Tests
         public HomeControllerTests()
         {
             var builder = new DbContextOptionsBuilder<MvcMovieContext>()
-                .UseSqlServer("Server=localhost,1433;Database=YourTestDb;User Id=sa;Password=YourStrong!Passw0rd;");
+                .UseSqlServer("Server=localhost,1433;Database=YourTestDb;User Id=sa;Password=SA_PASSWORD;");
 
             _context = new MvcMovieContext(builder.Options);
             
