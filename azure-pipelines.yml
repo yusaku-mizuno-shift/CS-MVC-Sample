@@ -30,6 +30,12 @@ steps:
 
 - task: DotNetCoreCLI@2
   inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+  displayName: 'dotnet restore'
+
+- task: DotNetCoreCLI@2
+  inputs:
     command: 'build'
     projects: 'MvcMovie/MvcMovie.csproj'
   displayName: 'dotnet build'
@@ -38,4 +44,5 @@ steps:
   inputs:
     command: 'test'
     projects: 'MvcMovieTests/MvcMovieTests.csproj'
+  displayName: 'dotnet test'
 
