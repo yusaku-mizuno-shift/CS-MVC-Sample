@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcMovie", "MvcMovie\MvcMovie.csproj", "{A9FA3149-FC2A-42C5-954C-BDD675E2EBF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMovieTests", "MvcMovieTests\MvcMovieTests.csproj", "{A429E185-795F-4C07-9BF6-2CFC668CFBAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcMovieTests", "MvcMovieTests\MvcMovieTests.csproj", "{A429E185-795F-4C07-9BF6-2CFC668CFBAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -24,4 +24,10 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\yusaku.mizuno.28\Desktop\CS-MVC-Sample\MvcMovie\.editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\yusaku.mizuno.28\Desktop\CS-MVC-Sample\MvcMovie\.editorconfig" />
+  </ItemGroup>
 </Project>
