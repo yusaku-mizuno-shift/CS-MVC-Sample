@@ -46,8 +46,8 @@ steps:
   displayName: 'docker check hostname'
 
 - script: |
-    docker exec $(sqlServerContainerName) ping $(sqlServerContainerName)
-  displayName: 'docker check hostname2'
+    /opt/mssql-tools/bin/sqlcmd -S $(sqlServerContainerName) -U sa -P $(sqlServerPassword) -Q "SELECT @@VERSION"
+  displayName: 'docker check sqlserver'
 
 - task: DotNetCoreCLI@2
   inputs:
