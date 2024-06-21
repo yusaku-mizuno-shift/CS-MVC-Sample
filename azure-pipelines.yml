@@ -32,6 +32,22 @@ steps:
     docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
   displayName: 'Start SQL Server Linux container'
 
+- script: |
+    docker logs $(sqlServerContainerName)
+  displayName: 'docker logs'
+
+- script: |
+    docker exec -it $(sqlServerContainerName) /opt/mssql/bin/sqlservr
+  displayName: 'sql server start'
+
+- script: |
+    docker logs $(sqlServerContainerName)
+  displayName: 'docker logs2'
+
+- script: |
+    docker exec -it $(sqlServerContainerName) ps aux | grep sqlservr
+  displayName: 'sql server check'
+  
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
