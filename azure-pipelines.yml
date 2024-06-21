@@ -25,12 +25,12 @@ steps:
     version: '6.x'
 
 - script: |
-    docker pull mcr.microsoft.com/mssql/server:2022-latest
+    docker pull mcr.microsoft.com/mssql/server:2019-latest
   displayName: 'Pull SQL Server Linux container image'
 
 - script: |
     docker network create mynetwork
-    docker run --network=mynetwork -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) --hostname $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
+    docker run --network=mynetwork -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) --hostname $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2019-latest
   displayName: 'Start SQL Server Linux container'
 
 - script: |
@@ -44,6 +44,10 @@ steps:
 - script: |
     docker exec $(sqlServerContainerName) hostname
   displayName: 'docker check hostname'
+
+- script: |
+    docker exec -it $(sqlServerContainerName) ping $(sqlServerContainerName)
+  displayName: 'docker check hostname2'
 
 - task: DotNetCoreCLI@2
   inputs:
