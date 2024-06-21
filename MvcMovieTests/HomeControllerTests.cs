@@ -25,7 +25,7 @@ namespace MvcMovie.Tests
         [Fact]
         public void Index_ReturnsAViewResult()
         {
-            _context.Database.EnsureCreated();
+            //_context.Database.EnsureCreated();
 
             // Arrange
             var controller = new HomeController(_logger);
