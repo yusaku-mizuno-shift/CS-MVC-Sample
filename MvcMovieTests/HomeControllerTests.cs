@@ -16,7 +16,7 @@ namespace MvcMovie.Tests
         public HomeControllerTests()
         {
             var builder = new DbContextOptionsBuilder<MvcMovieContext>()
-                .UseSqlServer("Server=0.0.0.0,1433;Database=YourTestDb;User Id=sa;Password=MSSQL_SA_PASSWORD;");
+                .UseSqlServer("Server=localhost,1433;Database=YourTestDb;User Id=sa;Password=MSSQL_SA_PASSWORD;");
 
             _context = new MvcMovieContext(builder.Options);
             
