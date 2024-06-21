@@ -37,7 +37,7 @@ steps:
   displayName: 'docker logs'
 
 - script: |
-    docker exec -it $(sqlServerContainerName) /opt/mssql/bin/sqlservr
+    docker exec $(sqlServerContainerName) /opt/mssql/bin/sqlservr
   displayName: 'sql server start'
 
 - script: |
@@ -45,7 +45,7 @@ steps:
   displayName: 'docker logs2'
 
 - script: |
-    docker exec -it $(sqlServerContainerName) ps aux | grep sqlservr
+    docker exec $(sqlServerContainerName) ps aux | grep sqlservr
   displayName: 'sql server check'
   
 - task: DotNetCoreCLI@2
