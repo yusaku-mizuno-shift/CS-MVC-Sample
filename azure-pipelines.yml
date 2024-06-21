@@ -46,7 +46,7 @@ steps:
   displayName: 'docker check hostname'
 
 - script: |
-    docker exec -it $(sqlServerContainerName) ping $(sqlServerContainerName)
+    docker exec $(sqlServerContainerName) ping $(sqlServerContainerName)
   displayName: 'docker check hostname2'
 
 - task: DotNetCoreCLI@2
