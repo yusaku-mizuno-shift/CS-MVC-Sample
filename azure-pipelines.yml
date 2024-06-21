@@ -2,33 +2,66 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'
 
-services:
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    env:
-      ACCEPT_EULA: Y
-      SA_PASSWORD: SA_PASSWORD
-    ports:
-    - 1433:1433
+variables:
+  buildConfiguration: 'Release'
+  sqlServerContainerName: 'sqlserver-linux'
+  sqlServerPassword: 'SA_PASSWORD'
+  sqlServerPort: 1433
 
 steps:
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
-    version: '6.0.423'
+    version: '6.x' # .NET 6.xを使用する場合
 
 - script: |
-    echo "Waiting for SQL Server to be available..."
-    for i in {1..30}; do
-      /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P SA_PASSWORD -Q "SELECT 1" && break
-      echo "SQL Server is unavailable - sleeping"
-      sleep 1
-    done
-    echo "SQL Server is up and running"
-  displayName: 'Wait for SQL Server to be available'
-  name: WaitForSqlServer
+    docker pull mcr.microsoft.com/mssql/server:2019-latest
+  displayName: 'Pull SQL Server Linux container image'
+
+- script: |
+    docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2019-latest
+  displayName: 'Start SQL Server Linux container'
+
+- script: |
+    dotnet restore
+  displayName: 'Restore NuGet packages'
+
+- script: |
+    dotnet build --configuration $(buildConfiguration)
+  displayName: 'Build solution'
+
+- script: |
+    dotnet test --configuration $(buildConfiguration) --logger trx --results-directory $(Build.SourcesDirectory)/TestResults
+  displayName: 'Run unit tests'
+
+- script: |
+    docker stop $(sqlServerContainerName)
+    docker rm $(sqlServerContainerName)
+  displayName: 'Stop and remove SQL Server Linux container'
+
+#####################################################################
+# trigger:
+# - main
+
+# pool:
+#   vmImage: 'ubuntu-latest'
+
+# services:
+#   mssql:
+#     image: mcr.microsoft.com/mssql/server:2022-latest
+#     env:
+#       ACCEPT_EULA: Y
+#       SA_PASSWORD: SA_PASSWORD
+#     ports:
+#     - 1433:1433
+
+# steps:
+# - task: UseDotNet@2
+#   inputs:
+#     packageType: 'sdk'
+#     version: '6.0.423'
 
 # - task: DockerInstaller@0
 #   inputs:
@@ -39,21 +72,21 @@ steps:
 #     docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=SA_PASSWORD' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 #   displayName: 'Run SQL Server Linux container'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
-  displayName: 'dotnet restore'
+# - task: DotNetCoreCLI@2
+#   inputs:
+#     command: 'restore'
+#     projects: '**/*.csproj'
+#   displayName: 'dotnet restore'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: 'MvcMovie/MvcMovie.csproj'
-  displayName: 'dotnet build'
+# - task: DotNetCoreCLI@2
+#   inputs:
+#     command: 'build'
+#     projects: 'MvcMovie/MvcMovie.csproj'
+#   displayName: 'dotnet build'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
-    projects: 'MvcMovieTests/MvcMovieTests.csproj'
-  displayName: 'dotnet test'
+# - task: DotNetCoreCLI@2
+#   inputs:
+#     command: 'test'
+#     projects: 'MvcMovieTests/MvcMovieTests.csproj'
+#   displayName: 'dotnet test'
 
