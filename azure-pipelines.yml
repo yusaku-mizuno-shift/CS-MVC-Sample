@@ -37,14 +37,6 @@ steps:
   displayName: 'docker logs'
 
 - script: |
-    docker exec $(sqlServerContainerName) /opt/mssql/bin/sqlservr
-  displayName: 'sql server start'
-
-- script: |
-    docker logs $(sqlServerContainerName)
-  displayName: 'docker logs2'
-
-- script: |
     docker exec $(sqlServerContainerName) ps aux | grep sqlservr
   displayName: 'sql server check'
   
