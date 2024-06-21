@@ -5,9 +5,9 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  sqlServerContainerName: 'sqlserver-linux'
+  sqlServerContainerName: 'sqlserver'
   sqlServerPassword: 'MSSQL_SA_PASSWORD'
-  sqlServerPort: 14333
+  sqlServerPort: 1433
 
 # services:
 #   mssql:
@@ -29,7 +29,7 @@ steps:
   displayName: 'Pull SQL Server Linux container image'
 
 - script: |
-    docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):14333 --name $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
+    docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
   displayName: 'Start SQL Server Linux container'
 
 - script: |
