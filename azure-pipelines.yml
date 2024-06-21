@@ -2,51 +2,12 @@ trigger:
 - main
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
-  buildConfiguration: 'Release'
   sqlServerContainerName: 'sqlserver-linux'
   sqlServerPassword: 'SA_PASSWORD'
   sqlServerPort: 1433
-
-steps:
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '6.x' # .NET 6.xを使用する場合
-
-- script: |
-    docker pull mcr.microsoft.com/mssql/server:2019-latest
-  displayName: 'Pull SQL Server Linux container image'
-
-- script: |
-    docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2019-latest
-  displayName: 'Start SQL Server Linux container'
-
-- script: |
-    dotnet restore
-  displayName: 'Restore NuGet packages'
-
-- script: |
-    dotnet build --configuration $(buildConfiguration)
-  displayName: 'Build solution'
-
-- script: |
-    dotnet test --configuration $(buildConfiguration) --logger trx --results-directory $(Build.SourcesDirectory)/TestResults
-  displayName: 'Run unit tests'
-
-- script: |
-    docker stop $(sqlServerContainerName)
-    docker rm $(sqlServerContainerName)
-  displayName: 'Stop and remove SQL Server Linux container'
-
-#####################################################################
-# trigger:
-# - main
-
-# pool:
-#   vmImage: 'ubuntu-latest'
 
 # services:
 #   mssql:
@@ -57,36 +18,39 @@ steps:
 #     ports:
 #     - 1433:1433
 
-# steps:
-# - task: UseDotNet@2
-#   inputs:
-#     packageType: 'sdk'
-#     version: '6.0.423'
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '6.x'
 
-# - task: DockerInstaller@0
-#   inputs:
-#     dockerVersion: '17.09.0-ce'
+- script: |
+    docker pull mcr.microsoft.com/mssql/server:2022-latest
+  displayName: 'Pull SQL Server Linux container image'
 
-# - script: |
-#     docker pull mcr.microsoft.com/mssql/server:2022-latest
-#     docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=SA_PASSWORD' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
-#   displayName: 'Run SQL Server Linux container'
+- script: |
+    docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
+  displayName: 'Start SQL Server Linux container'
 
-# - task: DotNetCoreCLI@2
-#   inputs:
-#     command: 'restore'
-#     projects: '**/*.csproj'
-#   displayName: 'dotnet restore'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+  displayName: 'dotnet restore'
 
-# - task: DotNetCoreCLI@2
-#   inputs:
-#     command: 'build'
-#     projects: 'MvcMovie/MvcMovie.csproj'
-#   displayName: 'dotnet build'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: 'MvcMovie/MvcMovie.csproj'
+  displayName: 'dotnet build'
 
-# - task: DotNetCoreCLI@2
-#   inputs:
-#     command: 'test'
-#     projects: 'MvcMovieTests/MvcMovieTests.csproj'
-#   displayName: 'dotnet test'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: 'MvcMovieTests/MvcMovieTests.csproj'
+  displayName: 'dotnet test'
 
+- script: |
+    docker stop $(sqlServerContainerName)
+    docker rm $(sqlServerContainerName)
+  displayName: 'Stop and remove SQL Server Linux container'
