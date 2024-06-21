@@ -16,7 +16,7 @@ namespace MvcMovie.Tests
         public HomeControllerTests()
         {
             var builder = new DbContextOptionsBuilder<MvcMovieContext>()
-                .UseSqlServer("Server=sqlserver,1433;Database=YourTestDb;User Id=sa;Password=MSSQL_SA_PASSWORD;");
+                .UseSqlServer("Server=172.17.0.2,1433;Database=YourTestDb;User Id=sa;Password=MSSQL_SA_PASSWORD;");
 
             _context = new MvcMovieContext(builder.Options);
             
@@ -25,7 +25,7 @@ namespace MvcMovie.Tests
         [Fact]
         public void Index_ReturnsAViewResult()
         {
-            //_context.Database.EnsureCreated();
+            _context.Database.EnsureCreated();
 
             // Arrange
             var controller = new HomeController(_logger);
