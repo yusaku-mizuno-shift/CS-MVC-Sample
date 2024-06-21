@@ -7,7 +7,7 @@ pool:
 variables:
   sqlServerContainerName: 'sqlserver-linux'
   sqlServerPassword: 'MSSQL_SA_PASSWORD'
-  sqlServerPort: 1433
+  sqlServerPort: 14333
 
 # services:
 #   mssql:
@@ -29,9 +29,21 @@ steps:
   displayName: 'Pull SQL Server Linux container image'
 
 - script: |
-    docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
+    docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):14333 --name $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
   displayName: 'Start SQL Server Linux container'
-  
+
+- script: |
+    docker ps
+  displayName: 'docker ps'
+
+- script: |
+    docker inspect $(sqlServerContainerName)
+  displayName: 'docker inspect'
+
+- script: |
+    docker exec $(sqlServerContainerName) hostname
+  displayName: 'docker check hostname'
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
