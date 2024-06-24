@@ -16,10 +16,7 @@ namespace MvcMovie.Tests
         public HomeControllerTests()
         {
             string? env = Environment.GetEnvironmentVariable("sqlOptions");
-            var builder = new DbContextOptionsBuilder<MvcMovieContext>()
-                .UseSqlServer(env);
-            //var builder = new DbContextOptionsBuilder<MvcMovieContext>()
-              //  .UseSqlServer("Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;");
+            var builder = new DbContextOptionsBuilder<MvcMovieContext>().UseSqlServer(env);
 
             _context = new MvcMovieContext(builder.Options);
             
