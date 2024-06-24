@@ -7,7 +7,7 @@ pool:
 variables:
   sqlServerContainerName: 'sqlserver'
   sqlServerPassword: 'An9xsUzp'
-  sqlServerPort: 1433
+  sqlServerPort: 11433
 
 # services:
 #   mssql:
@@ -29,8 +29,7 @@ steps:
   displayName: 'Pull SQL Server Linux container image'
 
 - script: |
-    docker network create mynetwork
-    docker run --network mynetwork -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) --hostname $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
+    docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) --hostname $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
   displayName: 'Start SQL Server Linux container'
 
 - script: |
@@ -40,10 +39,6 @@ steps:
 - script: |
     docker network inspect mynetwork
   displayName: 'docker network inspect'
-
-- script: |
-    ping -c 4 sqlserver
-  displayName: 'docker ping hostname'
 
 # - script: |
 #     docker exec $(sqlServerContainerName) hostname
