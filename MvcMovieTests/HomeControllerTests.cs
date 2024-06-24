@@ -15,10 +15,13 @@ namespace MvcMovie.Tests
 
         public HomeControllerTests()
         {
-           // var builder = new DbContextOptionsBuilder<MvcMovieContext>()
-             //   .UseSqlServer("Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;");
+            string? env = Environment.GetEnvironmentVariable("sqlOptions");
+            var builder = new DbContextOptionsBuilder<MvcMovieContext>()
+                .UseSqlServer(env);
+            //var builder = new DbContextOptionsBuilder<MvcMovieContext>()
+              //  .UseSqlServer("Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;");
 
-            _context = new MvcMovieContext(new DbContextOptionsBuilder<MvcMovieContext>().Options);
+            _context = new MvcMovieContext(builder.Options);
             
         }
 
