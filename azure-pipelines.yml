@@ -70,6 +70,8 @@ steps:
     command: 'test'
     projects: 'MvcMovieTests/MvcMovieTests.csproj'
   displayName: 'dotnet test'
+  env:
+    sqlOptions: $(sqlOptions)
 
 - script: |
     docker stop $(sqlServerContainerName)
