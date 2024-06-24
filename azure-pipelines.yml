@@ -8,6 +8,7 @@ variables:
   sqlServerContainerName: 'sqlserver'
   sqlServerPassword: 'An9xsUzp'
   sqlServerPort: 11433
+  sqlOptions: 'Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;'
 
 # services:
 #   mssql:
