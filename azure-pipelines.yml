@@ -6,7 +6,7 @@ pool:
 
 variables:
   sqlServerContainerName: 'sqlserver'
-  sqlServerPassword: 'MSSQL_SA_PASSWORD'
+  sqlServerPassword: 'An9xsUzp'
   sqlServerPort: 1433
 
 # services:
