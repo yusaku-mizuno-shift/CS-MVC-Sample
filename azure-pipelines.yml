@@ -33,10 +33,21 @@ steps:
     docker run --network mynetwork -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) --hostname $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
   displayName: 'Start SQL Server Linux container'
 
-
 - script: |
     docker inspect $(sqlServerContainerName)
   displayName: 'docker inspect'
+
+- script: |
+    docker network inspect mynetwork
+  displayName: 'docker network inspect'
+
+- script: |
+    docker exec $(sqlServerContainerName) nslookup sqlserver
+  displayName: 'docker nslookup hostname'
+
+# - script: |
+#     docker exec $(sqlServerContainerName) hostname
+#   displayName: 'docker check hostname'
 
 # - script: |
 #     docker exec $(sqlServerContainerName) /opt/mssql-tools/bin/sqlcmd -U sa -P $(sqlServerPassword) -Q "SELECT @@VERSION"
