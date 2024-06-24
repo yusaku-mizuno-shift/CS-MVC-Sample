@@ -20,6 +20,10 @@ variables:
 #     - 1433:1433
 
 steps:
+- script: |
+    printenv | sort
+  displayName: 'Print Env'
+
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
