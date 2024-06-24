@@ -36,9 +36,9 @@ steps:
     docker inspect $(sqlServerContainerName)
   displayName: 'docker inspect'
 
-- script: |
-    docker network inspect mynetwork
-  displayName: 'docker network inspect'
+# - script: |
+#     docker network inspect mynetwork
+#   displayName: 'docker network inspect'
 
 # - script: |
 #     docker exec $(sqlServerContainerName) hostname
