@@ -42,7 +42,7 @@ steps:
   displayName: 'docker network inspect'
 
 - script: |
-    docker exec $(sqlServerContainerName) ping -c 4 sqlserver
+    ping -c 4 sqlserver
   displayName: 'docker ping hostname'
 
 # - script: |
