@@ -29,25 +29,18 @@ steps:
   displayName: 'Pull SQL Server Linux container image'
 
 - script: |
-    docker network create mynetwork
-    docker run --network mynetwork -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) --hostname $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
+    # docker network create mynetwork
+    docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) --hostname $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
   displayName: 'Start SQL Server Linux container'
 
-- script: |
-    docker ps
-  displayName: 'docker ps'
 
 - script: |
     docker inspect $(sqlServerContainerName)
   displayName: 'docker inspect'
 
-- script: |
-    docker exec $(sqlServerContainerName) hostname
-  displayName: 'docker check hostname'
-
-- script: |
-    docker exec $(sqlServerContainerName) /opt/mssql-tools/bin/sqlcmd -U sa -P $(sqlServerPassword) -Q "SELECT @@VERSION"
-  displayName: 'docker check sqlserver'
+# - script: |
+#     docker exec $(sqlServerContainerName) /opt/mssql-tools/bin/sqlcmd -U sa -P $(sqlServerPassword) -Q "SELECT @@VERSION"
+#   displayName: 'docker check sqlserver'
 
 - task: DotNetCoreCLI@2
   inputs:
