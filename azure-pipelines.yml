@@ -11,7 +11,7 @@ variables:
   sqlOptions: 'Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;'
 
 services:
-  mssql:
+  sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
     - $(sqlServerPort):1433
@@ -29,14 +29,6 @@ steps:
   inputs:
     packageType: 'sdk'
     version: '6.x'
-
-# - script: |
-#     docker pull mcr.microsoft.com/mssql/server:2022-latest
-#   displayName: 'Pull SQL Server Linux container image'
-
-# - script: |
-#     docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=$(sqlServerPassword)' -p $(sqlServerPort):1433 --name $(sqlServerContainerName) --hostname $(sqlServerContainerName) -d mcr.microsoft.com/mssql/server:2022-latest
-#   displayName: 'Start SQL Server Linux container'
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -57,8 +49,3 @@ steps:
   displayName: 'dotnet test'
   env:
     sqlOptions: $(sqlOptions)
-
-# - script: |
-#     docker stop $(sqlServerContainerName)
-#     docker rm $(sqlServerContainerName)
-#   displayName: 'Stop and remove SQL Server Linux container'
