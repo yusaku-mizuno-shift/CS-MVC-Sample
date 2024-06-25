@@ -15,7 +15,6 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
     - $(sqlServerPort):1433
-    options: --name $(sqlServerContainerName) --hostname $(sqlServerContainerName)
     env:
       ACCEPT_EULA: Y
       MSSQL_SA_PASSWORD: $(sqlServerPassword)
