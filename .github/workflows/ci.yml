@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  build:
+  CI Pipeline:
     runs-on: ubuntu-latest
 
     services:
@@ -30,13 +30,13 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Print Env
       run: printenv | sort
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '6.x'
 
