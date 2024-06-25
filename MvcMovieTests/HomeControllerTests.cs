@@ -16,10 +16,13 @@ namespace MvcMovie.Tests
         public HomeControllerTests()
         {
             string? env = Environment.GetEnvironmentVariable("sqlOptions");
-            var builder = new DbContextOptionsBuilder<MvcMovieContext>().UseSqlServer(env);
-
-            _context = new MvcMovieContext(builder.Options);
-            
+            if (env == null)
+            {
+                _context = new MvcMovieContext(new DbContextOptionsBuilder<MvcMovieContext>().UseSqlite("Data Source=MvcMovie.db").Options);
+            } else
+            {
+                _context = new MvcMovieContext(new DbContextOptionsBuilder<MvcMovieContext>().UseSqlServer(env).Options);
+            }            
         }
 
         [Fact]
