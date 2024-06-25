@@ -10,7 +10,6 @@ namespace MvcMovie.Tests
 {
     public class HomeControllerTests
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly MvcMovieContext _context;
 
         public HomeControllerTests()
@@ -31,7 +30,7 @@ namespace MvcMovie.Tests
             _context.Database.EnsureCreated();
 
             // Arrange
-            var controller = new HomeController(_logger);
+            var controller = new HomeController();
             string Title = "TEST MOVIE 1";
             var addMovie = new Movie
             {
@@ -47,7 +46,7 @@ namespace MvcMovie.Tests
 
             // Act
             var result = controller.Index();
-            var movieResult = this._context.Movie.SingleOrDefault(c => c.Title == Title);
+            var movieResult = this._context.Movie.SingleOrDefault(c => c.Title == Title) ?? new Movie();
 
             // Assert
             Assert.IsType<ViewResult>(result);
