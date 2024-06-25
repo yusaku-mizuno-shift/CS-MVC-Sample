@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  CI Pipeline:
+  ci:
     runs-on: ubuntu-latest
 
     services:
