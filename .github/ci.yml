@@ -1,0 +1,49 @@
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+          - 11433:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: An9xsUzp
+
+    env:
+      sqlServerContainerName: 'sqlserver'
+      sqlServerPassword: 'An9xsUzp'
+      sqlServerPort: 11433
+      sqlOptions: 'Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Print Env
+      run: printenv | sort
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '6.x'
+
+    - name: Build project
+      run: dotnet build MvcMovie/MvcMovie.csproj
+
+    - name: Test project
+      run: dotnet test MvcMovieTests/MvcMovieTests.csproj
+      env:
+        sqlOptions: ${{ env.sqlOptions }}
