@@ -29,12 +29,6 @@ steps:
     packageType: 'sdk'
     version: '6.x'
 
-# - task: DotNetCoreCLI@2
-#   inputs:
-#     command: 'restore'
-#     projects: '**/*.csproj'
-#   displayName: 'dotnet restore'
-
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
