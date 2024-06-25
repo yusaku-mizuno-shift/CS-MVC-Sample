@@ -58,7 +58,7 @@ steps:
   env:
     sqlOptions: $(sqlOptions)
 
-- script: |
-    docker stop $(sqlServerContainerName)
-    docker rm $(sqlServerContainerName)
-  displayName: 'Stop and remove SQL Server Linux container'
+# - script: |
+#     docker stop $(sqlServerContainerName)
+#     docker rm $(sqlServerContainerName)
+#   displayName: 'Stop and remove SQL Server Linux container'
