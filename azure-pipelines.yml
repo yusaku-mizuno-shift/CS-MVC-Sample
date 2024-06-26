@@ -9,7 +9,6 @@ variables:
   sqlServerPassword: 'An9xsUzp'
   sqlServerPort: 11433
   sqlOptions: 'Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;'
-  coverageOutput: '$(Common.TestResultsDirectory)/TestResults/coverage/'
 
 services:
   sqlserver:
@@ -35,7 +34,7 @@ steps:
   inputs:
     command: 'test'
     projects: 'MvcMovieTests/MvcMovieTests.csproj'
-    arguments: '--collect:"XPlat Code Coverage" /p:CoverletOutput=$(coverageOutput) /p:CoverletOutputFormat=cobertura'
+    arguments: '--collect:"XPlat Code Coverage" /p:CoverletOutput=$(System.DefaultWorkingDirectory)/TestResults/coverage/ /p:CoverletOutputFormat=cobertura'
   env:
     sqlOptions: $(sqlOptions)
 
@@ -43,7 +42,7 @@ steps:
   displayName: 'Publish Code Coverage Results'
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/TestResults/coverage/coverage.cobertura.xml'
 
 # - task: DotNetCoreCLI@2
 #   displayName: 'dotnet build'
