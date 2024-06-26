@@ -35,7 +35,7 @@ steps:
     command: 'test'
     publishTestResults: false
     projects: 'MvcMovieTests/MvcMovieTests.csproj'
-    arguments: '--logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/coverage.cobertura.xml /p:CoverletOutputFormat=cobertura'
+    arguments: '--logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
   env:
     sqlOptions: $(sqlOptions)
 
