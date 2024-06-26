@@ -37,7 +37,7 @@ steps:
 
 - script: |
     mkdir -p $(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)
-    dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=$(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)/coverage.cobertura.xml /p:CoverletOutputFormat=cobertura
+    dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutput=$(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)/ /p:CoverletOutputFormat=cobertura
     echo '----------------------------------------------------------------'
     ls $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults
     echo '----------------------------------------------------------------'
@@ -61,10 +61,10 @@ steps:
   displayName: 'Publish Test Results'
 
 - task: PublishCodeCoverageResults@1
+  displayName: 'Publish Code Coverage Results'
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)/coverage.cobertura.xml'
-  displayName: 'Publish Code Coverage Results'
 
 # - task: DotNetCoreCLI@2
 #   displayName: 'dotnet build'
