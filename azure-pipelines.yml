@@ -9,6 +9,8 @@ variables:
   sqlServerPassword: 'An9xsUzp'
   sqlServerPort: 11433
   sqlOptions: 'Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;'
+  testResultsDir: 'TestResults'
+  coverageDir: 'CoverageResults'
 
 services:
   sqlserver:
@@ -29,27 +31,31 @@ steps:
     packageType: 'sdk'
     version: '6.x'
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet test'
-  inputs:
-    command: 'test'
-    projects: 'MvcMovieTests/MvcMovieTests.csproj'
-    arguments: '--collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
-  env:
-    sqlOptions: $(sqlOptions)
+- script: |
+    dotnet test --logger "trx;LogFileName=$(testResultsDir)/test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=$(coverageDir)/coverage /p:CoverletOutputFormat=cobertura
+  displayName: 'Print Env'
 
-# - task: PublishTestResults@2
-#   displayName: 'Publish Test Results'
+# - task: DotNetCoreCLI@2
+#   displayName: 'dotnet test'
 #   inputs:
-#     testResultsFormat: 'XUnit'
-#     testResultsFiles: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults//test-results.trx'
-#     failTaskOnFailedTests: true
+#     command: 'test'
+#     projects: 'MvcMovieTests/MvcMovieTests.csproj'
+#     arguments: '--collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
+#   env:
+#     sqlOptions: $(sqlOptions)
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'VSTest'
+    testResultsFiles: '$(testResultsDir)/*.trx'
+    failTaskOnFailedTests: true
+  displayName: 'Publish Test Results'
 
 - task: PublishCodeCoverageResults@1
-  displayName: 'Publish Code Coverage Results'
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/coverage/coverage.cobertura.xml'
+    summaryFileLocation: '$(coverageDir)/coverage.cobertura.xml'
+  displayName: 'Publish Code Coverage Results'
 
 # - task: DotNetCoreCLI@2
 #   displayName: 'dotnet build'
