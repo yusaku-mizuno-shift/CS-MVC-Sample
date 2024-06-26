@@ -36,9 +36,15 @@ steps:
   displayName: 'Clear NuGet Cache'
 
 - script: |
-    mkdir -p $(testResultsDir)
     mkdir -p $(coverageDir)
-    dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=$(testResultsDir)/test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=$(coverageDir)/coverage /p:CoverletOutputFormat=cobertura
+    dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/$(coverageDir)/coverage /p:CoverletOutputFormat=cobertura
+    ls $(coverageDir)
+    echo '----------------------------------------------------------------'
+    ls $(coverageDir)/coverage
+    echo '----------------------------------------------------------------'
+    ls $(System.DefaultWorkingDirectory)
+    echo '----------------------------------------------------------------'
+    ls $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults
   displayName: 'dotnet test'
 
 # - task: DotNetCoreCLI@2
@@ -60,7 +66,7 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(coverageDir)/coverage.cobertura.xml'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/$(coverageDir)/coverage.cobertura.xml'
   displayName: 'Publish Code Coverage Results'
 
 # - task: DotNetCoreCLI@2
