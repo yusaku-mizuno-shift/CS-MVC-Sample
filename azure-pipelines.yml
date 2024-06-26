@@ -33,18 +33,17 @@ steps:
   displayName: 'dotnet test'
   inputs:
     command: 'test'
-    publishTestResults: false
     projects: 'MvcMovieTests/MvcMovieTests.csproj'
-    arguments: '--logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
+    arguments: '--collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
   env:
     sqlOptions: $(sqlOptions)
 
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results'
-  inputs:
-    testResultsFormat: 'XUnit'
-    testResultsFiles: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults//test-results.trx'
-    failTaskOnFailedTests: true
+# - task: PublishTestResults@2
+#   displayName: 'Publish Test Results'
+#   inputs:
+#     testResultsFormat: 'XUnit'
+#     testResultsFiles: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults//test-results.trx'
+#     failTaskOnFailedTests: true
 
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish Code Coverage Results'
