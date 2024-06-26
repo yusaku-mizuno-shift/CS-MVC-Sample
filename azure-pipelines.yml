@@ -30,15 +30,30 @@ steps:
     version: '6.x'
 
 - task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: 'MvcMovie/MvcMovie.csproj'
-  displayName: 'dotnet build'
-
-- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
   inputs:
     command: 'test'
     projects: 'MvcMovieTests/MvcMovieTests.csproj'
-  displayName: 'dotnet test'
+    arguments: '--logger "xunit;LogFileName=test-results.xml" --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
   env:
     sqlOptions: $(sqlOptions)
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results'
+  inputs:
+    testResultsFormat: 'XUnit'
+    testResultsFiles: '**/test-results.xml'
+    failTaskOnFailedTests: true
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish Code Coverage Results'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'
+
+# - task: DotNetCoreCLI@2
+#   displayName: 'dotnet build'
+#   inputs:
+#     command: 'build'
+#     projects: 'MvcMovie/MvcMovie.csproj'
