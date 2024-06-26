@@ -9,8 +9,6 @@ variables:
   sqlServerPassword: 'An9xsUzp'
   sqlServerPort: 11433
   sqlOptions: 'Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;'
-  testResultsDir: 'TestResults'
-  coverageDir: 'CoverageResults'
 
 services:
   sqlserver:
@@ -31,19 +29,6 @@ steps:
     packageType: 'sdk'
     version: '6.x'
 
-# - script: |
-#     dotnet nuget locals all --clear
-#   displayName: 'Clear NuGet Cache'
-
-# - script: |
-#     mkdir -p $(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)
-#     dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
-#     echo '----------------------------------------------------------------'
-#     ls $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults
-#     echo '----------------------------------------------------------------'
-#     cat $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/**/coverage.cobertura.xml
-#   displayName: 'dotnet test'
-
 - task: DotNetCoreCLI@2
   displayName: 'dotnet test'
   inputs:
@@ -53,6 +38,16 @@ steps:
   env:
     sqlOptions: $(sqlOptions)
 
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish Code Coverage Results'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+
+# - script: |
+#     dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+#   displayName: 'dotnet test'
+
 # - task: PublishTestResults@2
 #   inputs:
 #     testResultsFormat: 'VSTest'
@@ -60,11 +55,11 @@ steps:
 #     failTaskOnFailedTests: true
 #   displayName: 'Publish Test Results'
 
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish Code Coverage Results'
-  inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/**/coverage.cobertura.xml'
+# - task: PublishCodeCoverageResults@1
+#   displayName: 'Publish Code Coverage Results'
+#   inputs:
+#     codeCoverageTool: 'Cobertura'
+#     summaryFileLocation: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/**/coverage.cobertura.xml'
 
 # - task: DotNetCoreCLI@2
 #   displayName: 'dotnet build'
