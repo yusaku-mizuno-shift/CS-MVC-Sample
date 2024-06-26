@@ -36,7 +36,7 @@ steps:
   displayName: 'Clear NuGet Cache'
 
 - script: |
-    mkdir -p $(coverageDir)
+    mkdir -p $(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)
     dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=$(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)/coverage.cobertura.xml /p:CoverletOutputFormat=cobertura
     echo '----------------------------------------------------------------'
     ls $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults
