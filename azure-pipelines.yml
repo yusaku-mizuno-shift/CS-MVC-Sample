@@ -38,9 +38,7 @@ steps:
 - script: |
     mkdir -p $(testResultsDir)
     mkdir -p $(coverageDir)
-    dotnet restore
-    dotnet build
-    dotnet test --logger "trx;LogFileName=$(testResultsDir)/test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=$(coverageDir)/coverage /p:CoverletOutputFormat=cobertura
+    dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=$(testResultsDir)/test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=$(coverageDir)/coverage /p:CoverletOutputFormat=cobertura
   displayName: 'dotnet test'
 
 # - task: DotNetCoreCLI@2
