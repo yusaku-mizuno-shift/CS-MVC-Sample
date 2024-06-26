@@ -31,34 +31,34 @@ steps:
     packageType: 'sdk'
     version: '6.x'
 
-- script: |
-    dotnet nuget locals all --clear
-  displayName: 'Clear NuGet Cache'
+# - script: |
+#     dotnet nuget locals all --clear
+#   displayName: 'Clear NuGet Cache'
 
-- script: |
-    mkdir -p $(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)
-    dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
-    echo '----------------------------------------------------------------'
-    ls $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults
-    echo '----------------------------------------------------------------'
-    cat $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/**/coverage.cobertura.xml
-  displayName: 'dotnet test'
-
-# - task: DotNetCoreCLI@2
+# - script: |
+#     mkdir -p $(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)
+#     dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+#     echo '----------------------------------------------------------------'
+#     ls $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults
+#     echo '----------------------------------------------------------------'
+#     cat $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/**/coverage.cobertura.xml
 #   displayName: 'dotnet test'
-#   inputs:
-#     command: 'test'
-#     projects: 'MvcMovieTests/MvcMovieTests.csproj'
-#     arguments: '--collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
-#   env:
-#     sqlOptions: $(sqlOptions)
 
-- task: PublishTestResults@2
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
   inputs:
-    testResultsFormat: 'VSTest'
-    testResultsFiles: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/test_results.trx'
-    failTaskOnFailedTests: true
-  displayName: 'Publish Test Results'
+    command: 'test'
+    projects: 'MvcMovieTests/MvcMovieTests.csproj'
+    arguments: '--collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura'
+  env:
+    sqlOptions: $(sqlOptions)
+
+# - task: PublishTestResults@2
+#   inputs:
+#     testResultsFormat: 'VSTest'
+#     testResultsFiles: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/test_results.trx'
+#     failTaskOnFailedTests: true
+#   displayName: 'Publish Test Results'
 
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish Code Coverage Results'
