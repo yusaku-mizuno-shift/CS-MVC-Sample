@@ -37,12 +37,11 @@ steps:
 
 - script: |
     mkdir -p $(coverageDir)
-    dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=$(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)/ /p:CoverletOutputFormat=cobertura
-    ls $(coverageDir)
-    echo '----------------------------------------------------------------'
-    ls $(System.DefaultWorkingDirectory)
+    dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=$(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)/coverage.cobertura.xml /p:CoverletOutputFormat=cobertura
     echo '----------------------------------------------------------------'
     ls $(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults
+    echo '----------------------------------------------------------------'
+    ls $(System.DefaultWorkingDirectory)/MvcMovieTests/$(coverageDir)
   displayName: 'dotnet test'
 
 # - task: DotNetCoreCLI@2
