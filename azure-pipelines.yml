@@ -35,7 +35,7 @@ steps:
     command: 'test'
     publishTestResults: false
     projects: 'MvcMovieTests/MvcMovieTests.csproj'
-    arguments: '--logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" /p:CoverletOutput=$(System.DefaultWorkingDirectory)/TestResults/coverage/ /p:CoverletOutputFormat=cobertura'
+    arguments: '--logger "trx;LogFileName=$(System.DefaultWorkingDirectory)/TestResults/test-results.trx" --collect:"XPlat Code Coverage" /p:CoverletOutput=$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/coverage/coverage.cobertura.xml /p:CoverletOutputFormat=cobertura'
   env:
     sqlOptions: $(sqlOptions)
 
@@ -43,14 +43,14 @@ steps:
   displayName: 'Publish Test Results'
   inputs:
     testResultsFormat: 'XUnit'
-    testResultsFiles: '**/test-results.trx'
+    testResultsFiles: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults//test-results.trx'
     failTaskOnFailedTests: true
 
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish Code Coverage Results'
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/TestResults/coverage/coverage.cobertura.xml'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/coverage/coverage.cobertura.xml'
 
 # - task: DotNetCoreCLI@2
 #   displayName: 'dotnet build'
