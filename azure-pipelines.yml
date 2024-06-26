@@ -35,7 +35,7 @@ steps:
     command: 'test'
     publishTestResults: false
     projects: 'MvcMovieTests/MvcMovieTests.csproj'
-    arguments: '--logger "xunit;LogFileName=test-results.xml" --collect:"XPlat Code Coverage" /p:CoverletOutput=$(System.DefaultWorkingDirectory)/TestResults/coverage/ /p:CoverletOutputFormat=cobertura'
+    arguments: '--logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" /p:CoverletOutput=$(System.DefaultWorkingDirectory)/TestResults/coverage/ /p:CoverletOutputFormat=cobertura'
   env:
     sqlOptions: $(sqlOptions)
 
@@ -43,7 +43,7 @@ steps:
   displayName: 'Publish Test Results'
   inputs:
     testResultsFormat: 'XUnit'
-    testResultsFiles: '**/test-results.xml'
+    testResultsFiles: '**/test-results.trx'
     failTaskOnFailedTests: true
 
 - task: PublishCodeCoverageResults@1
