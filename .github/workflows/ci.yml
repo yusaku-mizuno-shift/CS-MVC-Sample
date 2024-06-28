@@ -41,20 +41,22 @@ jobs:
         dotnet-version: '6.x'
 
     - name: Test project
-      run: dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura
+      run: |
+        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura
+        ls -a MvcMovieTests/TestResults
       env:
         sqlOptions: ${{ env.sqlOptions }}
 
     - name: Publish Test Results
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: test-results
-        path: '**/TestResults/*.trx'
+        path: ' MvcMovieTests/TestResults/*.trx'
 
     - name: Publish Code Coverage Results
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: code-coverage
         path: '**/coverage.cobertura.xml'
