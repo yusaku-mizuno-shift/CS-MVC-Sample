@@ -52,7 +52,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: test-results
-        path: ' TestResults/test-results.trx'
+        path: ' **/TestResults/test-results.trx'
 
     - name: Publish Code Coverage Results
       if: always()
