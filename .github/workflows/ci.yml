@@ -42,7 +42,7 @@ jobs:
 
     - name: Test project
       run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura
+        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=TestResults/test-results.trx"
         ls -a MvcMovieTests/TestResults
       env:
         sqlOptions: ${{ env.sqlOptions }}
@@ -52,7 +52,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: test-results
-        path: ' MvcMovieTests/TestResults/*.trx'
+        path: ' TestResults/test-results.trx'
 
     - name: Publish Code Coverage Results
       if: always()
