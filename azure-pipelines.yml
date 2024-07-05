@@ -46,26 +46,3 @@ steps:
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
-
-# - script: |
-#     dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test_results.trx" --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
-#   displayName: 'dotnet test'
-
-# - task: PublishTestResults@2
-#   inputs:
-#     testResultsFormat: 'VSTest'
-#     testResultsFiles: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/test_results.trx'
-#     failTaskOnFailedTests: true
-#   displayName: 'Publish Test Results'
-
-# - task: PublishCodeCoverageResults@1
-#   displayName: 'Publish Code Coverage Results'
-#   inputs:
-#     codeCoverageTool: 'Cobertura'
-#     summaryFileLocation: '$(System.DefaultWorkingDirectory)/MvcMovieTests/TestResults/**/coverage.cobertura.xml'
-
-# - task: DotNetCoreCLI@2
-#   displayName: 'dotnet build'
-#   inputs:
-#     command: 'build'
-#     projects: 'MvcMovie/MvcMovie.csproj'
