@@ -59,7 +59,7 @@ jobs:
     - name: Check coverage threshold
       id: check-coverage
       run: |
-        COVERAGE=$(grep -oP '(?<=line-rate=")[^"]*' coverage/cobertura.xml | awk '{s+=$1} END {print s/NR*100}')
+        COVERAGE=$(grep -oP '(?<=line-rate=")[^"]*' **/coverage/cobertura.xml | awk '{s+=$1} END {print s/NR*100}')
         echo "Coverage is $COVERAGE%"
         if (( $(echo "$COVERAGE < 85" | bc -l) )); then
           echo "Coverage is below threshold"
