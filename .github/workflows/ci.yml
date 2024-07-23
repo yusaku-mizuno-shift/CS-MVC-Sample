@@ -27,6 +27,7 @@ jobs:
       sqlServerPassword: 'An9xsUzp'
       sqlServerPort: 11433
       sqlOptions: 'Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;'
+      C0Threshold: 85
 
     steps:
     - name: Checkout code
@@ -61,11 +62,11 @@ jobs:
       run: |
         REPORT_PATH=$(find . -name 'coverage.cobertura.xml' | sort | tail -n 1)
         echo $REPORT_PATH
-        COVERAGE=$(grep -oP '<coverage[^>]*line-rate="[^"]*' $REPORT_PATH | grep -oP 'line-rate="\K[^"]+')
-        COVERAGE=$(echo "$COVERAGE * 100" | bc)
-        echo "Coverage is $COVERAGE%"
-        if (( $(echo "$COVERAGE < 85" | bc -l) )); then
-          echo "Coverage is below threshold"
+        LINE_COVERAGE=$(grep -oP '<coverage[^>]*line-rate="[^"]*' $REPORT_PATH | grep -oP 'line-rate="[^"]+')
+        LINE_COVERAGE=$(echo "$COVERAGE * 100" | bc)
+        echo "Coverage is $LINE_COVERAGE%"
+        if (( $(echo "$LINE_COVERAGE < env.C0Threshold" | bc -l) )); then
+          echo "Line Coverage is below threshold"
           exit 1
         fi
       shell: bash
