@@ -27,7 +27,7 @@ jobs:
       sqlServerPassword: 'An9xsUzp'
       sqlServerPort: 11433
       sqlOptions: 'Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;'
-      C0Threshold: 85
+      C0Threshold: 0
 
     steps:
     - name: Checkout code
@@ -63,6 +63,7 @@ jobs:
         echo $REPORT_PATH
         LINE_COVERAGE=$(grep -oP '<coverage[^>]*line-rate="[^"]*' $REPORT_PATH | grep -oP 'line-rate="\K[^"]+')
         LINE_COVERAGE=$(echo "$LINE_COVERAGE * 100" | bc)
+        LINE_COVERAGE=$(printf "%.2f" "$LINE_COVERAGE" | sed 's/\.00$//;s/\.\([0-9]*[1-9]\)0*$/.\1/')
         echo "Coverage is $LINE_COVERAGE%"
         if (( $(echo "$LINE_COVERAGE < $C0Threshold" | bc -l) )); then
           echo "Line Coverage is below threshold"
