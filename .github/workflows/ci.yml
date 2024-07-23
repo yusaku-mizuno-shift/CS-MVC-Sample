@@ -57,19 +57,32 @@ jobs:
         path: ' **/TestResults/test-results.trx'
 
     - name: Check coverage threshold
-      id: check-coverage
       run: |
         REPORT_PATH=$(find . -name 'coverage.cobertura.xml' | sort | tail -n 1)
-        echo $REPORT_PATH
         LINE_COVERAGE=$(grep -oP '<coverage[^>]*line-rate="[^"]*' $REPORT_PATH | grep -oP 'line-rate="\K[^"]+')
         LINE_COVERAGE=$(echo "$LINE_COVERAGE * 100" | bc)
-        LINE_COVERAGE=$(printf "%.2f" "$LINE_COVERAGE" | sed 's/\.00$//;s/\.\([0-9]*[1-9]\)0*$/.\1/')
-        echo "Coverage is $LINE_COVERAGE%"
+        # LINE_COVERAGE=$(printf "%.2f" "$LINE_COVERAGE" | sed 's/\.00$//;s/\.\([0-9]*[1-9]\)0*$/.\1/')
+        # echo "Coverage is $LINE_COVERAGE%"
+
         if (( $(echo "$LINE_COVERAGE < $C0Threshold" | bc -l) )); then
           echo "Line Coverage is below threshold"
           exit 1
         fi
-      shell: bash
+    
+    - name: Check for vulnerable packages
+      run: |
+        dotnet list package --vulnerable > vulnerability_report.txt
+
+        if grep -q "Severity: High\|Severity: Critical" vulnerability_report.txt; then
+          echo "High or Critical vulnerabilities found!"
+          cat vulnerability_report.txt
+          exit 1
+        elif grep -q "Severity: Moderate" vulnerability_report.txt; then
+          echo "Moderate vulnerabilities found, but proceeding."
+          cat vulnerability_report.txt
+        else
+          echo "No high or critical vulnerabilities found."
+        fi
       
     - name: Publish Code Coverage Results
       uses: actions/upload-artifact@v4
