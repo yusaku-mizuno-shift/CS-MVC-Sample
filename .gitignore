@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /CableBougo_SSO/Migrations/20230802024427_FixCost.Designer.cs
 /CableBougo_SSO/Migrations/20230802035425_Add_ReductionReason_in_Cost.Designer.cs
+
+# vulnerability_report
+vulnerability_report.txt
