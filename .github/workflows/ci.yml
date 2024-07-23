@@ -60,7 +60,7 @@ jobs:
       id: check-coverage
       run: |
         REPORT_PATH=$(find . -name 'coverage.cobertura.xml' | sort | tail -n 1)
-        echo "::set-output name=report_path::$REPORT_PATH"
+        echo $REPORT_PATH
         COVERAGE=$(grep -oP '<coverage[^>]*line-rate="[^"]*' $REPORT_PATH | awk '{s+=$1} END {if (NR > 0) print s/NR*100; else print 0}')
         echo "Coverage is $COVERAGE%"
         if (( $(echo "$COVERAGE < 85" | bc -l) )); then
@@ -74,4 +74,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: code-coverage
-        path: ${{ steps.check-coverage.outputs.report_path }}
+        path: '**/coverage.cobertura.xml'
