@@ -13,21 +13,20 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
+    # services:
+    #   sqlserver:
+    #     image: mcr.microsoft.com/mssql/server:2022-latest
+    #     ports:
+    #       - 11433:1433
+    #     env:
+    #       ACCEPT_EULA: Y
+    #       SA_PASSWORD: An9xsUzp
+
     env:
       sqlServerPassword: 'An9xsUzp'
       sqlServerPort: 11433
       sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=An9xsUzp;'
       C0Threshold: 0
-
-    services:
-      sqlserver:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        ports:
-          - ${{ env.sqlServerPort }}:1433
-        env:
-          ACCEPT_EULA: Y
-          SA_PASSWORD: ${{ env.sqlServerPassword }}
-
 
     steps:
     - name: Checkout code
@@ -43,6 +42,10 @@ jobs:
 
     - name: Roslyn Analysis(Build)
       run: dotnet build MvcMovie/MvcMovie.csproj
+
+    - name: Set up SQL Server
+      run: |
+        docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.sqlServerPassword }}" -p ${{ env.sqlServerPort }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
     - name: Test project
       run: |
