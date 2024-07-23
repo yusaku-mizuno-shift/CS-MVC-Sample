@@ -40,41 +40,36 @@ jobs:
       with:
         dotnet-version: '6.x'
 
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: Roslyn Analysis(Build)
+      run: dotnet build MvcMovie/MvcMovie.csproj --no-restore
 
     - name: Test project
       run: |
-        dotnet test --no-build MvcMovieTests/MvcMovieTests.csproj
-        ls -a MvcMovieTests
-        # dotnet test --no-build MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
       env:
         sqlOptions: ${{ env.sqlOptions }}
 
-    # - name: Publish Test Results
-    #   if: always()
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: test-results
-    #     path: ' **/TestResults/test-results.trx'
+    - name: Publish Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: ' **/TestResults/test-results.trx'
 
-    # - name: Check coverage threshold
-    #   id: check-coverage
-    #   run: |
-    #     COVERAGE=$(grep -oP '(?<=line-rate=")[^"]*' coverage/cobertura.xml | awk '{s+=$1} END {print s/NR*100}')
-    #     echo "Coverage is $COVERAGE%"
-    #     if (( $(echo "$COVERAGE < 85" | bc -l) )); then
-    #       echo "Coverage is below threshold"
-    #       exit 1
-    #     fi
-    #   shell: bash
+    - name: Check coverage threshold
+      id: check-coverage
+      run: |
+        COVERAGE=$(grep -oP '(?<=line-rate=")[^"]*' coverage/cobertura.xml | awk '{s+=$1} END {print s/NR*100}')
+        echo "Coverage is $COVERAGE%"
+        if (( $(echo "$COVERAGE < 85" | bc -l) )); then
+          echo "Coverage is below threshold"
+          exit 1
+        fi
+      shell: bash
       
-    # - name: Publish Code Coverage Results
-    #   if: always()
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: code-coverage
-    #     path: '**/coverage.cobertura.xml'
-
-    - name: Roslyn Analysis(Build)
-      run: dotnet build MvcMovie/MvcMovie.csproj --no-restore
+    - name: Publish Code Coverage Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage
+        path: '**/coverage.cobertura.xml'
