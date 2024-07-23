@@ -12,36 +12,23 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-
-    # services:
-    #   sqlserver:
-    #     image: mcr.microsoft.com/mssql/server:2022-latest
-    #     ports:
-    #       - 11433:1433
-    #     env:
-    #       ACCEPT_EULA: Y
-    #       SA_PASSWORD: An9xsUzp
-
     env:
       sqlServerPassword: 'An9xsUzp'
       sqlServerPort: 11433
       sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=An9xsUzp;'
-      C0Threshold: 0
+      coverageThreshold: 0
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Print Env
       run: printenv | sort
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '6.x'
-
-    - name: Roslyn Analysis(Build)
-      run: dotnet build MvcMovie/MvcMovie.csproj
 
     - name: Set up SQL Server
       run: |
@@ -64,14 +51,18 @@ jobs:
         REPORT_PATH=$(find . -name 'coverage.cobertura.xml' | sort | tail -n 1)
         LINE_COVERAGE=$(grep -oP '<coverage[^>]*line-rate="[^"]*' $REPORT_PATH | grep -oP 'line-rate="\K[^"]+')
         LINE_COVERAGE=$(echo "$LINE_COVERAGE * 100" | bc)
-        # LINE_COVERAGE=$(printf "%.2f" "$LINE_COVERAGE" | sed 's/\.00$//;s/\.\([0-9]*[1-9]\)0*$/.\1/')
-        # echo "Coverage is $LINE_COVERAGE%"
 
-        if (( $(echo "$LINE_COVERAGE < $C0Threshold" | bc -l) )); then
+        if (( $(echo "$LINE_COVERAGE < $coverageThreshold" | bc -l) )); then
           echo "Line Coverage is below threshold"
           exit 1
         fi
-    
+  
+    - name: Publish Code Coverage Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage
+        path: '**/coverage.cobertura.xml'
+
     - name: Check for vulnerable packages
       run: |
         dotnet list package --vulnerable > vulnerability_report.txt
@@ -86,9 +77,8 @@ jobs:
         else
           echo "No high or critical vulnerabilities found."
         fi
-      
-    - name: Publish Code Coverage Results
-      uses: actions/upload-artifact@v4
-      with:
-        name: code-coverage
-        path: '**/coverage.cobertura.xml'
+    
+    # Roslynの解析は専用のコマンドがない。dotnet build で解析も行う。
+    - name: Roslyn Analysis(Build)
+      run: dotnet build MvcMovie/MvcMovie.csproj
+
