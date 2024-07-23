@@ -13,21 +13,21 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
+    env:
+      sqlServerPassword: 'An9xsUzp'
+      sqlServerPort: 11433
+      sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=An9xsUzp;'
+      C0Threshold: 0
+
     services:
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
         ports:
-          - 11433:1433
+          - ${{ env.sqlServerPort }}:1433
         env:
           ACCEPT_EULA: Y
-          SA_PASSWORD: An9xsUzp
+          SA_PASSWORD: ${{ env.sqlServerPassword }}
 
-    env:
-      sqlServerContainerName: 'sqlserver'
-      sqlServerPassword: 'An9xsUzp'
-      sqlServerPort: 11433
-      sqlOptions: 'Server=localhost,11433;Database=YourTestDb;User Id=sa;Password=An9xsUzp;'
-      C0Threshold: 0
 
     steps:
     - name: Checkout code
