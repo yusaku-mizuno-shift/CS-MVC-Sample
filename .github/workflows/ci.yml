@@ -11,16 +11,16 @@ on:
 
 jobs:
   ci:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
-    # services:
-    #   sqlserver:
-    #     image: mcr.microsoft.com/mssql/server:2022-latest
-    #     ports:
-    #       - 11433:1433
-    #     env:
-    #       ACCEPT_EULA: Y
-    #       SA_PASSWORD: An9xsUzp
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+          - 11433:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: An9xsUzp
 
     env:
       sqlServerContainerName: 'sqlserver'
@@ -40,30 +40,29 @@ jobs:
       with:
         dotnet-version: '6.x'
 
-    # - name: Test project
-    #   run: |
-    #     dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
-    #     ls -a MvcMovieTests/TestResults
-    #   env:
-    #     sqlOptions: ${{ env.sqlOptions }}
+    - name: Build project
+      run: dotnet build MvcMovie/MvcMovie.csproj
 
-    # - name: Publish Test Results
-    #   if: always()
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: test-results
-    #     path: ' **/TestResults/test-results.trx'
+    - name: Test project
+      run: |
+        dotnet test --no-build MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        ls -a MvcMovieTests/TestResults
+      env:
+        sqlOptions: ${{ env.sqlOptions }}
 
-    # - name: Publish Code Coverage Results
-    #   if: always()
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: code-coverage
-    #     path: '**/coverage.cobertura.xml'
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: Publish Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: ' **/TestResults/test-results.trx'
 
-    # - name: Build project
-    #   run: dotnet build MvcMovie/MvcMovie.csproj
+    - name: Publish Code Coverage Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage
+        path: '**/coverage.cobertura.xml'
+
     - name: Build project
       run: dotnet build --no-restore
