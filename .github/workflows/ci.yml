@@ -40,9 +40,6 @@ jobs:
       with:
         dotnet-version: '6.x'
 
-    - name: Build project
-      run: dotnet build MvcMovie/MvcMovie.csproj
-
     - name: Test project
       run: |
         dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
@@ -57,6 +54,17 @@ jobs:
         name: test-results
         path: ' **/TestResults/test-results.trx'
 
+    - name: Check coverage threshold
+      id: check-coverage
+      run: |
+        COVERAGE=$(grep -oP '(?<=line-rate=")[^"]*' coverage/cobertura.xml | awk '{s+=$1} END {print s/NR*100}')
+        echo "Coverage is $COVERAGE%"
+        if (( $(echo "$COVERAGE < 85" | bc -l) )); then
+          echo "Coverage is below threshold"
+          exit 1
+        fi
+      shell: bash
+      
     - name: Publish Code Coverage Results
       if: always()
       uses: actions/upload-artifact@v4
@@ -64,5 +72,5 @@ jobs:
         name: code-coverage
         path: '**/coverage.cobertura.xml'
 
-    - name: Build project
-      run: dotnet build --no-restore
+    - name: Roslyn Analysis(Build)
+      run: dotnet build MvcMovie/MvcMovie.csproj
