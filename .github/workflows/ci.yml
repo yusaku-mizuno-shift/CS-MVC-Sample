@@ -41,11 +41,11 @@ jobs:
         dotnet-version: '6.x'
 
     - name: Roslyn Analysis(Build)
-      run: dotnet build MvcMovie/MvcMovie.csproj --no-restore
+      run: dotnet build MvcMovie/MvcMovie.csproj
 
     - name: Test project
       run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        dotnet test --no-restore MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
       env:
         sqlOptions: ${{ env.sqlOptions }}
 
