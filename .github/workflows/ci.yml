@@ -40,10 +40,12 @@ jobs:
       with:
         dotnet-version: '6.x'
 
+    - name: Restore dependencies
+      run: dotnet restore
+
     - name: Test project
       run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
-        ls -a MvcMovieTests/TestResults
+        dotnet test --no-build MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
       env:
         sqlOptions: ${{ env.sqlOptions }}
 
@@ -73,4 +75,4 @@ jobs:
         path: '**/coverage.cobertura.xml'
 
     - name: Roslyn Analysis(Build)
-      run: dotnet build MvcMovie/MvcMovie.csproj
+      run: dotnet build MvcMovie/MvcMovie.csproj --no-restore
