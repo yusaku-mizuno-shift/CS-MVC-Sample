@@ -62,7 +62,7 @@ jobs:
         REPORT_PATH=$(find . -name 'coverage.cobertura.xml' | sort | tail -n 1)
         echo $REPORT_PATH
         LINE_COVERAGE=$(grep -oP '<coverage[^>]*line-rate="[^"]*' $REPORT_PATH | grep -oP 'line-rate="[^"]+')
-        LINE_COVERAGE=$(echo "$COVERAGE * 100" | bc)
+        LINE_COVERAGE=$(echo "$LINE_COVERAGE * 100" | bc)
         echo "Coverage is $LINE_COVERAGE%"
         if (( $(echo "$LINE_COVERAGE < $C0Threshold" | bc -l) )); then
           echo "Line Coverage is below threshold"
