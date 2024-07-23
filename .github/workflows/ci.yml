@@ -45,7 +45,7 @@ jobs:
 
     - name: Test project
       run: |
-        dotnet test --no-build MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
         ls -a MvcMovieTests/TestResults
       env:
         sqlOptions: ${{ env.sqlOptions }}
