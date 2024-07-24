@@ -34,10 +34,12 @@ jobs:
         dotnet-version: '6.x'
 
     - name: Restore
-      run: dotnet restore MvcMovie/MvcMovie.csproj
+      run: |
+        dotnet restore MvcMovie/MvcMovie.csproj
 
     - name: Static Analyze
-      run: dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
+      run: |
+        dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
 
     - name: Set up SQL Server
       run: |
@@ -45,7 +47,7 @@ jobs:
 
     - name: Tests
       run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutput=./coverage/ /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
       env:
         sqlOptions: ${{ env.sqlOptions }}
 
