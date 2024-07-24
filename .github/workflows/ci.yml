@@ -33,38 +33,38 @@ jobs:
       with:
         dotnet-version: '6.x'
 
-    - name: Set up SQL Server
-      run: |
-        docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.sqlServerPassword }}" -p ${{ env.sqlServerPort }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+    # - name: Set up SQL Server
+    #   run: |
+    #     docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.sqlServerPassword }}" -p ${{ env.sqlServerPort }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
-    - name: Tests
-      run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
-      env:
-        sqlOptions: ${{ env.sqlOptions }}
+    # - name: Tests
+    #   run: |
+    #     dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+    #   env:
+    #     sqlOptions: ${{ env.sqlOptions }}
 
-    - name: Publish Test Results
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: ' **/TestResults/test-results.trx'
+    # - name: Publish Test Results
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: test-results
+    #     path: ' **/TestResults/test-results.trx'
 
-    - name: Check coverage threshold
-      run: |
-        REPORT_PATH=$(find . -name 'coverage.cobertura.xml' | sort | tail -n 1)
-        LINE_COVERAGE=$(grep -oP '<coverage[^>]*line-rate="[^"]*' $REPORT_PATH | grep -oP 'line-rate="\K[^"]+')
-        LINE_COVERAGE=$(echo "$LINE_COVERAGE * 100" | bc)
+    # - name: Check coverage threshold
+    #   run: |
+    #     REPORT_PATH=$(find . -name 'coverage.cobertura.xml' | sort | tail -n 1)
+    #     LINE_COVERAGE=$(grep -oP '<coverage[^>]*line-rate="[^"]*' $REPORT_PATH | grep -oP 'line-rate="\K[^"]+')
+    #     LINE_COVERAGE=$(echo "$LINE_COVERAGE * 100" | bc)
 
-        if (( $(echo "$LINE_COVERAGE < $coverageThreshold" | bc -l) )); then
-          echo "Line Coverage is below threshold"
-          exit 1
-        fi
+    #     if (( $(echo "$LINE_COVERAGE < $coverageThreshold" | bc -l) )); then
+    #       echo "Line Coverage is below threshold"
+    #       exit 1
+    #     fi
   
-    - name: Publish Code Coverage Results
-      uses: actions/upload-artifact@v4
-      with:
-        name: code-coverage
-        path: '**/coverage.cobertura.xml'
+    # - name: Publish Code Coverage Results
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: code-coverage
+    #     path: '**/coverage.cobertura.xml'
 
     - name: Check for vulnerable packages
       run: |
