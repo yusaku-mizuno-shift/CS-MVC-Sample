@@ -33,7 +33,7 @@ jobs:
       with:
         dotnet-version: '6.x'
 
-    - name: .NET Restore
+    - name: Restore
       run: dotnet restore MvcMovie/MvcMovie.csproj
 
     - name: Static Analyze
