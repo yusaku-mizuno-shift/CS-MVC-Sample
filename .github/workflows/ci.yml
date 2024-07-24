@@ -32,7 +32,11 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '6.x'
-
+    
+    # Roslynの解析は専用のコマンドがない。dotnet build で解析も行う。
+    - name: Roslyn Analysis(Build)
+      run: dotnet build MvcMovie/MvcMovie.csproj
+      
     - name: Set up SQL Server
       run: |
         docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.sqlServerPassword }}" -p ${{ env.sqlServerPort }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
@@ -80,8 +84,3 @@ jobs:
         else
           echo "No high or critical vulnerabilities found."
         fi
-    
-    # Roslynの解析は専用のコマンドがない。dotnet build で解析も行う。
-    - name: Roslyn Analysis(Build)
-      run: dotnet build MvcMovie/MvcMovie.csproj
-
