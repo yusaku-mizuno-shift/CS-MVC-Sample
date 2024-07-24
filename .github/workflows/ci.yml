@@ -47,8 +47,9 @@ jobs:
 
     - name: Tests
       run: |
-        dotnet test --verbosity diagnostic MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
-        ls -a ./
+        dotnet test --verbosity normal MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        mkdir -p coverage
+        mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
       env:
         sqlOptions: ${{ env.sqlOptions }}
 
@@ -73,7 +74,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: code-coverage
-        path: '**/coverage.cobertura.xml'
+        path: 'coverage/coverage.cobertura.xml'
 
     - name: Check for vulnerable packages
       run: |
