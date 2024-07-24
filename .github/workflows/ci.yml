@@ -75,10 +75,10 @@ jobs:
         name: code-coverage
         path: 'coverage/coverage.cobertura.xml'
 
-    - name: Check for vulnerable packages
-      run: |
-        dotnet list package --vulnerable --format json > vulnerability_report.json
-        ls -a
+    # - name: Check for vulnerable packages
+    #   run: |
+    #     dotnet list package --vulnerable --format json > vulnerability_report.json
+    #     ls -a
 
         # if grep -q "Severity: High\|Severity: Critical" vulnerability_report.txt; then
         #   echo "High or Critical vulnerabilities found!"
@@ -91,16 +91,13 @@ jobs:
         #   echo "No high or critical vulnerabilities found."
         # fi
 
-        HIGH_OR_CRITICAL=$(jq '.vulnerabilities[] | select(.severity == "High" or .severity == "Critical")' vulnerability_report.json)
-        MODERATE=$(jq '.vulnerabilities[] | select(.severity == "Moderate")' vulnerability_report.json)
-
-        if [ -n "$HIGH_OR_CRITICAL" ]; then
-          echo "High or Critical vulnerabilities found!"
-          jq '.' vulnerability_report.json
+    - name: Check for vulnerable packages
+      run: |
+        dotnet list package --vulnerable --format json > vulnerabilities.json
+        high_severity_count=$(jq '[.projects[].frameworks[].vulnerablePackages[] | select(.severity == "High")] | length' vulnerabilities.json)
+        if [ "$high_severity_count" -gt 0 ]; then
+          echo "##[error]High severity vulnerabilities found: $high_severity_count"
           exit 1
-        elif [ -n "$MODERATE" ]; then
-          echo "Moderate vulnerabilities found, but proceeding."
-          jq '.' vulnerability_report.json
         else
-          echo "No high or critical vulnerabilities found."
+          echo "No high severity vulnerabilities found."
         fi
