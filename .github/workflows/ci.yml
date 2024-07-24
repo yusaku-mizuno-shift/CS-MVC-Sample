@@ -33,7 +33,7 @@ jobs:
       with:
         dotnet-version: '6.x'
     
-    # Roslynの解析は専用のコマンドがない。dotnet build で解析も行う。
+    # Roslynの解析は専用のコマンドがない。dotnet build をソースプロジェクトに対して実行することでRoslynの解析も実行される。
     - name: Roslyn Analysis(Build)
       run: dotnet build MvcMovie/MvcMovie.csproj
 
@@ -43,7 +43,7 @@ jobs:
 
     - name: Tests
       run: |
-        dotnet test --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
       env:
         sqlOptions: ${{ env.sqlOptions }}
 
