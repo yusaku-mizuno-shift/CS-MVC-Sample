@@ -77,7 +77,7 @@ jobs:
 
     - name: Check for vulnerable packages
       run: |
-        dotnet list package --vulnerable --format json
+        dotnet list package --vulnerable --format json > vulnerability_report.json
         ls -a
 
         # if grep -q "Severity: High\|Severity: Critical" vulnerability_report.txt; then
