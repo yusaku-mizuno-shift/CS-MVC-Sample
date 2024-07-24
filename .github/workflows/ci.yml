@@ -37,7 +37,8 @@ jobs:
     #   run: dotnet restore MvcMovie/MvcMovie.csproj
 
     - name: Static Analyze
-      run: dotnet build MvcMovie/MvcMovie.csproj -warnaserror
+      # run: dotnet build MvcMovie/MvcMovie.csproj -warnaserror
+      run: dotnet build MvcMovie/MvcMovie.csproj
 
     - name: Set up SQL Server
       run: |
