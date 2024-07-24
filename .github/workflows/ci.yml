@@ -16,9 +16,9 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     env:
-      sqlServerPassword: 'An9xsUzp'
+      sqlServerPassword: 'password'
       sqlServerPort: 11433
-      sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=An9xsUzp;'
+      sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=password;'
       coverageThreshold: 0
 
     steps:
@@ -34,8 +34,8 @@ jobs:
         dotnet-version: '6.x'
     
     # Roslynの解析は専用のコマンドがない。dotnet build をソースプロジェクトに対して実行することでRoslynの解析も実行される。
-    - name: Roslyn Analysis(Build)
-      run: dotnet build MvcMovie/MvcMovie.csproj
+    - name: Static Analyze
+      run: dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserrorS
 
     - name: Set up SQL Server
       run: |
