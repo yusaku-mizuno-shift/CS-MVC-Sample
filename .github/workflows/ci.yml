@@ -61,8 +61,9 @@ jobs:
 
     - name: Check coverage threshold
       run: |
-        LINE_COVERAGE=$(echo "$(grep -oP '<coverage[^>]*line-rate="[^"]*' 'coverage/coverage.cobertura.xml' | grep -oP 'line-rate="\K[^"]+') * 100" | bc)
-
+        # LINE_COVERAGE=$(echo "$(grep -oP '<coverage[^>]*line-rate="[^"]*' 'coverage/coverage.cobertura.xml' | grep -oP 'line-rate="\K[^"]+') * 100" | bc)
+        LINE_COVERAGE=$(xmllint --xpath 'string(//coverage/@line-rate)' coverage/coverage.cobertura.xml | awk '{print $1 * 100}')
+        
         if (( $(echo "$LINE_COVERAGE < $coverageThreshold" | bc -l) )); then
           echo "Line Coverage is below threshold"
           exit 1
@@ -76,15 +77,30 @@ jobs:
 
     - name: Check for vulnerable packages
       run: |
-        dotnet list package --vulnerable > vulnerability_report.txt
+        dotnet list package --vulnerable --format json
+        ls -a
 
-        if grep -q "Severity: High\|Severity: Critical" vulnerability_report.txt; then
+        # if grep -q "Severity: High\|Severity: Critical" vulnerability_report.txt; then
+        #   echo "High or Critical vulnerabilities found!"
+        #   cat vulnerability_report.txt
+        #   exit 1
+        # elif grep -q "Severity: Moderate" vulnerability_report.txt; then
+        #   echo "Moderate vulnerabilities found, but proceeding."
+        #   cat vulnerability_report.txt
+        # else
+        #   echo "No high or critical vulnerabilities found."
+        # fi
+
+        HIGH_OR_CRITICAL=$(jq '.vulnerabilities[] | select(.severity == "High" or .severity == "Critical")' vulnerability_report.json)
+        MODERATE=$(jq '.vulnerabilities[] | select(.severity == "Moderate")' vulnerability_report.json)
+
+        if [ -n "$HIGH_OR_CRITICAL" ]; then
           echo "High or Critical vulnerabilities found!"
-          cat vulnerability_report.txt
+          jq '.' vulnerability_report.json
           exit 1
-        elif grep -q "Severity: Moderate" vulnerability_report.txt; then
+        elif [ -n "$MODERATE" ]; then
           echo "Moderate vulnerabilities found, but proceeding."
-          cat vulnerability_report.txt
+          jq '.' vulnerability_report.json
         else
           echo "No high or critical vulnerabilities found."
         fi
