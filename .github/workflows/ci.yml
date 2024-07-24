@@ -33,11 +33,11 @@ jobs:
       with:
         dotnet-version: '6.x'
 
-    - name: Restore
-      run: dotnet restore MvcMovie/MvcMovie.csproj
+    # - name: Restore
+    #   run: dotnet restore MvcMovie/MvcMovie.csproj
 
     - name: Static Analyze
-      run: dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
+      run: dotnet build MvcMovie/MvcMovie.csproj -warnaserror
 
     - name: Set up SQL Server
       run: |
