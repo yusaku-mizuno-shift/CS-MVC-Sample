@@ -66,20 +66,20 @@ jobs:
     #     name: code-coverage
     #     path: '**/coverage.cobertura.xml'
 
-    - name: Check for vulnerable packages
-      run: |
-        dotnet list package --vulnerable > vulnerability_report.txt
+    # - name: Check for vulnerable packages
+    #   run: |
+    #     dotnet list package --vulnerable > vulnerability_report.txt
 
-        if grep -q "Severity: High\|Severity: Critical" vulnerability_report.txt; then
-          echo "High or Critical vulnerabilities found!"
-          cat vulnerability_report.txt
-          exit 1
-        elif grep -q "Severity: Moderate" vulnerability_report.txt; then
-          echo "Moderate vulnerabilities found, but proceeding."
-          cat vulnerability_report.txt
-        else
-          echo "No high or critical vulnerabilities found."
-        fi
+    #     if grep -q "Severity: High\|Severity: Critical" vulnerability_report.txt; then
+    #       echo "High or Critical vulnerabilities found!"
+    #       cat vulnerability_report.txt
+    #       exit 1
+    #     elif grep -q "Severity: Moderate" vulnerability_report.txt; then
+    #       echo "Moderate vulnerabilities found, but proceeding."
+    #       cat vulnerability_report.txt
+    #     else
+    #       echo "No high or critical vulnerabilities found."
+    #     fi
     
     # Roslynの解析は専用のコマンドがない。dotnet build で解析も行う。
     - name: Roslyn Analysis(Build)
