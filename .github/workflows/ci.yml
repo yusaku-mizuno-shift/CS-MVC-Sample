@@ -16,9 +16,9 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     env:
-      sqlServerPassword: 'password'
+      sqlServerPassword: 'An9xsUzp'
       sqlServerPort: 11433
-      sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=password;'
+      sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=An9xsUzp;'
       coverageThreshold: 0
 
     steps:
@@ -33,12 +33,11 @@ jobs:
       with:
         dotnet-version: '6.x'
 
-    # - name: Restore
-    #   run: dotnet restore MvcMovie/MvcMovie.csproj
+    - name: Restore
+      run: dotnet restore MvcMovie/MvcMovie.csproj
 
     - name: Static Analyze
-      # run: dotnet build MvcMovie/MvcMovie.csproj -warnaserror
-      run: dotnet build MvcMovie/MvcMovie.csproj
+      run: dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
 
     - name: Set up SQL Server
       run: |
