@@ -16,9 +16,9 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     env:
-      sqlServerPassword: 'An9xsUzp'
+      sqlServerPassword: 'PassworD'
       sqlServerPort: 11433
-      sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=An9xsUzp;'
+      sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=PassworD;'
       coverageThreshold: 0
 
     steps:
