@@ -10,7 +10,7 @@ builder.Services.AddDbContext<MvcMovieContext>(options =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-Console.WriteLine(undefinedVariable);
+//Console.WriteLine(undefinedVariable);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
