@@ -32,8 +32,10 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '6.x'
-    
-    # Roslynの解析は専用のコマンドがない。dotnet build をソースプロジェクトに対して実行することでRoslynの解析も実行される。
+
+    - name: .NET Restore
+      run: dotnet restore MvcMovie/MvcMovie.csproj
+
     - name: Static Analyze
       run: dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
 
@@ -43,7 +45,8 @@ jobs:
 
     - name: Tests
       run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        # dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        dotnet test --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
       env:
         sqlOptions: ${{ env.sqlOptions }}
 
