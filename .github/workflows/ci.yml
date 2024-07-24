@@ -2,11 +2,14 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
+      - develop
+
+  push:
+    branches:
+      - develop
+      - staging
       - main
 
 jobs:
