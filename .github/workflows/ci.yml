@@ -61,7 +61,6 @@ jobs:
 
     - name: Check coverage threshold
       run: |
-        # LINE_COVERAGE=$(echo "$(grep -oP '<coverage[^>]*line-rate="[^"]*' 'coverage/coverage.cobertura.xml' | grep -oP 'line-rate="\K[^"]+') * 100" | bc)
         LINE_COVERAGE=$(xmllint --xpath 'string(//coverage/@line-rate)' coverage/coverage.cobertura.xml | awk '{print $1 * 100}')
         
         if (( $(echo "$LINE_COVERAGE < $coverageThreshold" | bc -l) )); then
@@ -74,22 +73,6 @@ jobs:
       with:
         name: code-coverage
         path: 'coverage/coverage.cobertura.xml'
-
-    # - name: Check for vulnerable packages
-    #   run: |
-    #     dotnet list package --vulnerable --format json > vulnerability_report.json
-    #     ls -a
-
-        # if grep -q "Severity: High\|Severity: Critical" vulnerability_report.txt; then
-        #   echo "High or Critical vulnerabilities found!"
-        #   cat vulnerability_report.txt
-        #   exit 1
-        # elif grep -q "Severity: Moderate" vulnerability_report.txt; then
-        #   echo "Moderate vulnerabilities found, but proceeding."
-        #   cat vulnerability_report.txt
-        # else
-        #   echo "No high or critical vulnerabilities found."
-        # fi
 
     - name: Check for vulnerable packages
       run: |
