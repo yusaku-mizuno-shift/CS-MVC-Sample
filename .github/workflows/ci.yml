@@ -94,7 +94,7 @@ jobs:
     - name: Check for vulnerable packages
       run: |
         dotnet list package --vulnerable --format json > vulnerabilities.json
-        vulnerable_packages=$(jq '.projects[].frameworks[].vulnerablePackages // empty' vulnerabilities.json)
+        vulnerable_packages=$(jq -r '.projects[].frameworks[].vulnerablePackages // empty' vulnerabilities.json)
         echo $vulnerable_packages
         if [ -z "$vulnerable_packages" ]; then
           echo "No vulnerable packages found."
