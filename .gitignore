@@ -365,4 +365,4 @@ FodyWeavers.xsd
 /CableBougo_SSO/Migrations/20230802035425_Add_ReductionReason_in_Cost.Designer.cs
 
 # vulnerability_report
-vulnerability_report.txt
+vulnerabilities.json
