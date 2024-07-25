@@ -41,11 +41,17 @@ jobs:
       run: |
         dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
 
-    - name: Set up SQL Server
+    - name: Docker Run SQL Server
       run: |
         docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.sqlServerPassword }}" -p ${{ env.sqlServerPort }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
-    - name: Tests
+    - name: Run DB Migrations
+      run: |
+        dotnet ef database update --project MvcMovie/MvcMovie.csproj
+      env:
+        sqlOptions: ${{ env.sqlOptions }}
+
+    - name: Run Tests
       run: |
         dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
         mkdir -p coverage
