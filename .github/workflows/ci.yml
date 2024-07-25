@@ -33,6 +33,10 @@ jobs:
       with:
         dotnet-version: '6.x'
 
+    - name: Install dotnet-ef tool
+      run: |
+        dotnet tool install --global dotnet-ef
+
     - name: Restore
       run: |
         dotnet restore MvcMovie/MvcMovie.csproj
