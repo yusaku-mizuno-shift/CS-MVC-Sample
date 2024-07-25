@@ -34,4 +34,7 @@
   <ItemGroup>
     <None Include="C:\Users\yusaku.mizuno.28\Desktop\CS-MVC-Sample\MvcMovie\.editorconfig" />
   </ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
 </Project>
