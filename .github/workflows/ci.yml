@@ -94,11 +94,11 @@ jobs:
     - name: Check for vulnerable packages
       run: |
         dotnet list package --vulnerable --format json > vulnerabilities.json
-        vulnerable_count=$(jq '[.projects[].frameworks[].vulnerablePackages[]] | length' vulnerabilities.json)
-        if [ "$vulnerable_count" -eq 0 ]; then
+        vulnerable_packages=$(jq '.projects[].frameworks[].vulnerablePackages // empty' vulnerabilities.json)
+        if [ -z "$vulnerable_packages" ]; then
           echo "No vulnerable packages found."
         else
-          high_severity_count=$(jq '[.projects[].frameworks[].vulnerablePackages[] | select(.severity == "High")] | length' vulnerabilities.json)
+          high_severity_count=$(echo "$vulnerable_packages" | jq '[.[] | select(.severity == "High")] | length')
           if [ "$high_severity_count" -gt 0 ]; then
             echo "##[error]High severity vulnerabilities found: $high_severity_count"
             exit 1
