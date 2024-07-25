@@ -95,10 +95,12 @@ jobs:
       run: |
         dotnet list package --vulnerable --format json > vulnerabilities.json
         vulnerable_packages=$(jq '.projects[].frameworks[].vulnerablePackages // empty' vulnerabilities.json)
+        echo $vulnerable_packages
         if [ -z "$vulnerable_packages" ]; then
           echo "No vulnerable packages found."
         else
           high_severity_count=$(echo "$vulnerable_packages" | jq '[.[] | select(.severity == "High")] | length')
+          echo $high_severity_count
           if [ "$high_severity_count" -gt 0 ]; then
             echo "##[error]High severity vulnerabilities found: $high_severity_count"
             exit 1
