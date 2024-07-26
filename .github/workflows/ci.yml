@@ -57,7 +57,8 @@ jobs:
         /p:CoverletOutputFormat=cobertura \
         /p:CoverletOutput=./coverage/ \
         /p:Threshold=$COVERAGE_THRESHOLD \
-        /p:Include="[MvcMovie]MvcMovie.*"
+        /p:Include="[MvcMovie]MvcMovie.*" \
+        /p:Exclude="[MvcMovie]MvcMovie.Migrations.*,[MvcMovie]MvcMovie.Data.*"
       env:
         sqlOptions: ${{ env.SQL_OPTIONS }}
 
@@ -65,16 +66,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: test-results
-        path: 'MvcMovieTestsTestResults/test-results.trx'
-
-    # - name: Check Coverage Threshold
-    #   run: |
-    #     LINE_COVERAGE=$(xmllint --xpath 'string(//coverage/@line-rate)' coverage/coverage.cobertura.xml | awk '{print $1 * 100}')
-    #     echo $LINE_COVERAGE
-    #     if (( $(echo "$LINE_COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
-    #       echo "Line Coverage is below threshold"
-    #       exit 1
-    #     fi
+        path: 'MvcMovieTests/TestResults/test-results.trx'
   
     - name: Publish Code Coverage Results
       uses: actions/upload-artifact@v4
