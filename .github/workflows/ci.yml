@@ -51,7 +51,11 @@ jobs:
 
     - name: Run Tests
       run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura /p:Include="[MvcMovie]MvcMovie.*" --logger "trx;LogFileName=test-results.trx"
+        dotnet test MvcMovieTests/MvcMovieTests.csproj \
+        --collect:"XPlat Code Coverage" \
+        /p:CoverletOutputFormat=cobertura \
+        /p:Include="[MvcMovie]MvcMovie.Controllers.*,[MvcMovie]MvcMovie.Data.*,[MvcMovie]MvcMovie.Models.*" \
+        --logger "trx;LogFileName=test-results.trx"
         mkdir -p coverage
         mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
 
