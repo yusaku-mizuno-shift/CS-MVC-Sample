@@ -51,7 +51,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura /p:Include="[MvcMovie]*" --logger "trx;LogFileName=test-results.trx"
+        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura /p:Include="[MvcMovie/MvcMovie]/*" --logger "trx;LogFileName=test-results.trx"
         mkdir -p coverage
         mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
 
@@ -71,6 +71,7 @@ jobs:
     - name: Check Coverage Threshold
       run: |
         LINE_COVERAGE=$(xmllint --xpath 'string(//coverage/@line-rate)' coverage/coverage.cobertura.xml | awk '{print $1 * 100}')
+        echo $LINE_COVERAGE
         if (( $(echo "$LINE_COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
           echo "Line Coverage is below threshold"
           exit 1
