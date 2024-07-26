@@ -54,8 +54,9 @@ jobs:
         dotnet test MvcMovieTests/MvcMovieTests.csproj \
         --collect:"XPlat Code Coverage" \
         /p:CoverletOutputFormat=cobertura \
-        /p:Include="[MvcMovie]MvcMovie.Controllers.*,[MvcMovie]MvcMovie.Data.*,[MvcMovie]MvcMovie.Models.*" \
+        /p:Include="[MvcMovie]MvcMovie.Controllers.*,[MvcMovie]MvcMovie.Models.*" \
         --logger "trx;LogFileName=test-results.trx"
+
         mkdir -p coverage
         mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
 
