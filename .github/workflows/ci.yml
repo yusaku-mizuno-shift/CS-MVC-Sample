@@ -2,16 +2,9 @@
 name: .NET CI Pipeline
 
 on:
-  pull_request:
-    branches:
-      - develop
-
   push:
     branches:
-      - develop
-      - staging
-      - main
-
+      - *
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -57,8 +50,8 @@ jobs:
 
     - name: Run Tests
       run: |
+        mkdir -p coverage
         dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutput=./coverage/ /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
-        # mkdir -p coverage
         # mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
       env:
         sqlOptions: ${{ env.SQL_OPTIONS }}
