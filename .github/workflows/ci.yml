@@ -58,7 +58,7 @@ jobs:
         /p:CoverletOutput=./coverage/ \
         /p:Threshold=$COVERAGE_THRESHOLD \
         /p:Include="[MvcMovie]MvcMovie.*" \
-        /p:Exclude="[MvcMovie]MvcMovie.Migrations.*,[MvcMovie]MvcMovie.Data.*"
+        /p:Exclude=\"[MvcMovie]MvcMovie.Migrations.*,[MvcMovie]MvcMovie.Data.*\"
       env:
         sqlOptions: ${{ env.SQL_OPTIONS }}
 
