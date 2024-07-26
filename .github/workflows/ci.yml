@@ -47,8 +47,8 @@ jobs:
     - name: Run DB Migrations
       run: |
         dotnet ef database update --project MvcMovie/MvcMovie.csproj
-      env:
-        sqlOptions: ${{ env.SQL_OPTIONS }}
+      # env:
+      #   sqlOptions: ${{ env.SQL_OPTIONS }}
 
     - name: Run Tests
       run: |
