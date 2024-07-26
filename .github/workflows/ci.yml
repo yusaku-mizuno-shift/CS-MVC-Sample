@@ -49,11 +49,11 @@ jobs:
       run: |
         docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.sqlServerPassword }}" -p ${{ env.sqlServerPort }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
-    # - name: Run DB Migrations
-    #   run: |
-    #     dotnet ef database update --project MvcMovie/MvcMovie.csproj
-    #   env:
-    #     sqlOptions: ${{ env.sqlOptions }}
+    - name: Run DB Migrations
+      run: |
+        dotnet ef database update --project MvcMovie/MvcMovie.csproj
+      env:
+        sqlOptions: ${{ env.sqlOptions }}
 
     - name: Run Tests
       run: |
