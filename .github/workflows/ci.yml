@@ -55,8 +55,15 @@ jobs:
         dotnet test MvcMovieTests/MvcMovieTests.csproj /p:CollectCoverage=true /p:CoverletOutput=./coverage/coverage.cobertura.xml /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
         # mkdir -p coverage
         # mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
-
-        if [ ! -f coverage/coverage.cobertura.xml ]; then
+        
+        echo "================================"
+        ls -a
+        echo "================================"
+        ls -a ./
+        echo "================================"
+        ls -a ./coverage
+        
+        if [ ! -f ./coverage/coverage.cobertura.xml ]; then
           echo "Coverage file not found after tests"
           exit 1
         fi
