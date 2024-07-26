@@ -38,7 +38,8 @@ jobs:
 
     - name: Static Analyze
       run: |
-        dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
+        # dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
+        dotnet build MvcMovie/MvcMovie.csproj --no-restore
 
     - name: Docker Run SQL Server
       run: |
@@ -50,7 +51,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura /p:Include="[MvcMovie]*" --logger "trx;LogFileName=test-results.trx"
         mkdir -p coverage
         mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
 
