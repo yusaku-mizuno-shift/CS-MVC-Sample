@@ -28,8 +28,8 @@ namespace MvcMovie.Tests
         [Fact]
         public void Index_ReturnsAViewResult()
         {
-            this._context.Database.EnsureDeleted();
-            this._context.Database.EnsureCreated();
+            //this._context.Database.EnsureDeleted();
+            //this._context.Database.EnsureCreated();
 
             // Arrange
             var controller = new HomeController();
@@ -58,7 +58,7 @@ namespace MvcMovie.Tests
             Assert.Equal(7.99M, movieResult.Price);
             Assert.Equal("R", movieResult.Rating);
 
-            this._context.Database.EnsureDeleted();
+            //this._context.Database.EnsureDeleted();
         }
     }
 }
