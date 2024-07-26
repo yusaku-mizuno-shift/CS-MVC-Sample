@@ -52,10 +52,10 @@ jobs:
 
     - name: Run Tests
       run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutput=$(pwd)/coverage/ /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx" -v diag
-        # mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
+        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
 
-        if [ ! -f $(pwd)/coverage/coverage.cobertura.xml ]; then
+        if [ ! -f coverage/coverage.cobertura.xml ]; then
           echo "Coverage file not found after tests"
           exit 1
         fi
