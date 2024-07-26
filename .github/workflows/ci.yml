@@ -57,7 +57,7 @@ jobs:
         /p:CoverletOutputFormat=cobertura \
         /p:CoverletOutput=./coverage/ \
         /p:Threshold=$COVERAGE_THRESHOLD \
-        /p
+        /p:Include="[MvcMovie]MvcMovie.*"
       env:
         sqlOptions: ${{ env.SQL_OPTIONS }}
 
