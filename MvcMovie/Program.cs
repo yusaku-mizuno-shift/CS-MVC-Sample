@@ -30,6 +30,4 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-#pragma warning disable S6966 // Awaitable method should be used
-app.Run();
-#pragma warning restore S6966 // Awaitable method should be used
+await app.RunAsync();

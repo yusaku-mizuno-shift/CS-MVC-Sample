@@ -1,5 +1,5 @@
 
-name: CI
+name: .NET CI Pipeline
 
 on:
   pull_request:
@@ -16,13 +16,13 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     env:
-      sqlServerPassword: 'Pa33worD'
-      sqlServerPort: 11433
-      sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=Pa33worD;'
-      coverageThreshold: 0
+      SQL_SERVER_PASSWORD: 'Pa33worD'
+      SQL_SERVER_PORT: 11433
+      SQL_OPTIONS: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=Pa33worD;'
+      COVERAGE_THRESHOLD: 0
 
     steps:
-    - name: Checkout code
+    - name: Checkout Code
       uses: actions/checkout@v4
 
     - name: Print Env
@@ -33,11 +33,11 @@ jobs:
       with:
         dotnet-version: '6.x'
 
-    - name: Install dotnet-ef tool
+    - name: Tool Install
       run: |
         dotnet tool install --global dotnet-ef
 
-    - name: Restore
+    - name: .NET Restore
       run: |
         dotnet restore MvcMovie/MvcMovie.csproj
 
@@ -47,13 +47,13 @@ jobs:
 
     - name: Docker Run SQL Server
       run: |
-        docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.sqlServerPassword }}" -p ${{ env.sqlServerPort }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+        docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.SQL_SERVER_PASSWORD }}" -p ${{ env.SQL_SERVER_PORT }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
-    # - name: Run DB Migrations
-    #   run: |
-    #     dotnet ef database update --project MvcMovie/MvcMovie.csproj
-    #   env:
-    #     sqlOptions: ${{ env.sqlOptions }}
+    - name: Run DB Migrations
+      run: |
+        dotnet ef database update --project MvcMovie/MvcMovie.csproj
+      env:
+        sqlOptions: ${{ env.SQL_OPTIONS }}
 
     - name: Run Tests
       run: |
@@ -61,7 +61,7 @@ jobs:
         mkdir -p coverage
         mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
       env:
-        sqlOptions: ${{ env.sqlOptions }}
+        sqlOptions: ${{ env.SQL_OPTIONS }}
 
     - name: Publish Test Results
       uses: actions/upload-artifact@v4
@@ -69,10 +69,10 @@ jobs:
         name: test-results
         path: ' **/TestResults/test-results.trx'
 
-    - name: Check coverage threshold
+    - name: Check Coverage Threshold
       run: |
         LINE_COVERAGE=$(xmllint --xpath 'string(//coverage/@line-rate)' coverage/coverage.cobertura.xml | awk '{print $1 * 100}')
-        if (( $(echo "$LINE_COVERAGE < $coverageThreshold" | bc -l) )); then
+        if (( $(echo "$LINE_COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
           echo "Line Coverage is below threshold"
           exit 1
         fi
@@ -83,7 +83,7 @@ jobs:
         name: code-coverage
         path: 'coverage/coverage.cobertura.xml'
 
-    - name: Check for vulnerable packages
+    - name: Check Vulnerable Packages
       run: |
         dotnet list package --vulnerable --format json > vulnerabilities.json
         vulnerable_packages=$(jq -r '[.projects[].frameworks[]?.topLevelPackages[]?.vulnerabilities // []] | add' vulnerabilities.json)
