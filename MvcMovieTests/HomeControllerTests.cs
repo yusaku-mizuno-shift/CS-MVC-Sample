@@ -28,6 +28,7 @@ namespace MvcMovie.Tests
         [Fact]
         public void Index_ReturnsAViewResult()
         {
+            this._context.Database.EnsureDeleted();
             this._context.Database.EnsureCreated();
 
             // Arrange
