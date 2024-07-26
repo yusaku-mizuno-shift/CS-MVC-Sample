@@ -54,7 +54,7 @@ jobs:
         dotnet test MvcMovieTests/MvcMovieTests.csproj \
         --collect:"XPlat Code Coverage" \
         /p:CoverletOutputFormat=cobertura \
-        /p:Include="[MvcMovie]MvcMovie.Controllers.*,[MvcMovie]MvcMovie.Models.*" \
+        /p:Include="[MvcMovie]MvcMovie.Controllers.*" \
         --logger "trx;LogFileName=test-results.trx"
 
         mkdir -p coverage
