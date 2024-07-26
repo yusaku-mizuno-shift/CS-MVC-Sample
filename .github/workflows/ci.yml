@@ -44,24 +44,15 @@ jobs:
       run: |
         docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.SQL_SERVER_PASSWORD }}" -p ${{ env.SQL_SERVER_PORT }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
-    # - name: Run DB Migrations
-    #   run: |
-    #     dotnet ef database update --project MvcMovie/MvcMovie.csproj
-    #   env:
-    #     sqlOptions: ${{ env.SQL_OPTIONS }}
+    - name: Run DB Migrations
+      run: |
+        dotnet ef database update --project MvcMovie/MvcMovie.csproj
+      # env:
+      #   sqlOptions: ${{ env.SQL_OPTIONS }}
 
     - name: Run Tests
       run: |
-        mkdir -p ./coverage/
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutput=$(pwd)/coverage/ /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
-        echo "=================================="
-        ls -a
-        echo "=================================="
-        ls -a ./coverage/
-        echo "=================================="
-        echo $(pwd)
-        echo "=================================="
-        ls -a $(pwd)/coverage/
+        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutput=$(pwd)/coverage/ /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx" -v diag
         # mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
 
         if [ ! -f $(pwd)/coverage/coverage.cobertura.xml ]; then
