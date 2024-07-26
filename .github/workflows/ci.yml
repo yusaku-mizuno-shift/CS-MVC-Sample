@@ -12,7 +12,7 @@ jobs:
       SQL_SERVER_PASSWORD: 'Pa33worD'
       SQL_SERVER_PORT: 11433
       SQL_OPTIONS: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=Pa33worD;'
-      COVERAGE_THRESHOLD: 0
+      COVERAGE_THRESHOLD: 90
 
     steps:
     - name: Checkout Code
@@ -51,21 +51,12 @@ jobs:
 
     - name: Run Tests
       run: |
-        # dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage;Format=cobertura;Include=[MvcMovie]MvcMovie.*"
-        # mkdir -p $(pwd)/coverage
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --logger "trx;LogFileName=test-results.trx" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./coverage/
-        # mv $(find MvcMovieTests/TestResults -name 'coverage.cobertura.xml' | head -n 1) coverage/coverage.cobertura.xml
-        
-        # echo "================================"
-        # ls -a
-        # echo "================================"
-        # ls -a MvcMovieTests/TestResults
-        # echo "================================"
-        # find . -name 'coverage.cobertura.xml' 
-        if [ ! -f./coverage/coverage.cobertura.xml ]; then
-          echo "Coverage file not found after tests"
-          exit 1
-        fi
+        dotnet test MvcMovieTests/MvcMovieTests.csproj \
+        --logger "trx;LogFileName=test-results.trx" \
+        /p:CollectCoverage=true \
+        /p:CoverletOutputFormat=cobertura \
+        /p:CoverletOutput=./coverage/ \
+        /p:Threshold=$COVERAGE_THRESHOLD
       env:
         sqlOptions: ${{ env.SQL_OPTIONS }}
 
@@ -73,7 +64,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: test-results
-        path: ' **/TestResults/test-results.trx'
+        path: 'MvcMovieTestsTestResults/test-results.trx'
 
     - name: Check Coverage Threshold
       run: |
@@ -88,7 +79,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: code-coverage
-        path: 'coverage/coverage.cobertura.xml'
+        path: 'MvcMovieTests/coverage/coverage.cobertura.xml'
 
     - name: Check Vulnerable Packages
       run: |
