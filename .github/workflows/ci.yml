@@ -28,8 +28,6 @@ jobs:
 
     - name: Tool Install
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libxml2-utils
         dotnet tool install --global dotnet-ef
 
     - name: .NET Restore
@@ -39,7 +37,8 @@ jobs:
     - name: Static Analyze
       run: |
         # dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
-        dotnet build MvcMovie/MvcMovie.csproj  --configuration Release --no-restore
+        # dotnet build MvcMovie/MvcMovie.csproj  --configuration Release --no-restore
+        dotnet build MvcMovie/MvcMovie.csproj --no-restore
 
     - name: Docker Run SQL Server
       run: |

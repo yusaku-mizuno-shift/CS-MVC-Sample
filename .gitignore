@@ -366,3 +366,6 @@ FodyWeavers.xsd
 
 # vulnerability_report
 vulnerabilities.json
+
+# sample.yml
+sample.yml
