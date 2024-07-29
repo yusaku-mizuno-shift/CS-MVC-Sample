@@ -39,7 +39,7 @@ jobs:
     - name: Static Analyze
       run: |
         # dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
-        dotnet build MvcMovie/MvcMovie.csproj --no-restore
+        dotnet build MvcMovie/MvcMovie.csproj  --configuration Release --no-restore
 
     - name: Docker Run SQL Server
       run: |
