@@ -1,25 +1,21 @@
 
-name: CI
+name: .NET CI Pipeline
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
+      - '**'
 jobs:
   ci:
     runs-on: ubuntu-latest
     env:
-      sqlServerPassword: 'An9xsUzp'
-      sqlServerPort: 11433
-      sqlOptions: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=An9xsUzp;'
-      coverageThreshold: 0
+      SQL_SERVER_PASSWORD: 'Pa33worD'
+      SQL_SERVER_PORT: 11433
+      SQL_OPTIONS: 'Server=localhost,11433;Database=TestDb;User Id=sa;Password=Pa33worD;'
+      COVERAGE_THRESHOLD: 0
 
     steps:
-    - name: Checkout code
+    - name: Checkout Code
       uses: actions/checkout@v4
 
     - name: Print Env
@@ -30,55 +26,92 @@ jobs:
       with:
         dotnet-version: '6.x'
 
-    - name: Set up SQL Server
+    - name: Tool Install
       run: |
-        docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.sqlServerPassword }}" -p ${{ env.sqlServerPort }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+        dotnet tool install --global dotnet-ef
 
-    - name: Tests
+    - name: .NET Restore
       run: |
-        dotnet test MvcMovieTests/MvcMovieTests.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test-results.trx"
+        dotnet restore MvcMovie/MvcMovie.csproj
+
+    - name: Static Analyze
+      run: |
+        # dotnet build MvcMovie/MvcMovie.csproj --no-restore -warnaserror
+        dotnet build MvcMovie/MvcMovie.csproj  --configuration Release --no-restore
+        # dotnet build MvcMovie/MvcMovie.csproj --no-restore
+
+    - name: Docker Run SQL Server
+      run: |
+        docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=${{ env.SQL_SERVER_PASSWORD }}" -p ${{ env.SQL_SERVER_PORT }}:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+
+    # - name: Run DB Migrations
+    #   run: |
+    #     dotnet ef database update --project MvcMovie/MvcMovie.csproj
+
+    - name: Run Tests
+      run: |
+        dotnet test MvcMovieTests/MvcMovieTests.csproj \
+        --logger "trx;LogFileName=test-results.trx" \
+        /p:CollectCoverage=true \
+        /p:CoverletOutputFormat=cobertura \
+        /p:CoverletOutput=./coverage/ \
+        /p:Threshold=$COVERAGE_THRESHOLD \
+        /p:Include="[MvcMovie]MvcMovie.*" \
+        /p:Exclude=\"[MvcMovie]MvcMovie.Migrations.*,[MvcMovie]MvcMovie.Data.*\"
       env:
-        sqlOptions: ${{ env.sqlOptions }}
+        sqlOptions: ${{ env.SQL_OPTIONS }}
 
     - name: Publish Test Results
       uses: actions/upload-artifact@v4
       with:
         name: test-results
-        path: ' **/TestResults/test-results.trx'
-
-    - name: Check coverage threshold
-      run: |
-        REPORT_PATH=$(find . -name 'coverage.cobertura.xml' | sort | tail -n 1)
-        LINE_COVERAGE=$(grep -oP '<coverage[^>]*line-rate="[^"]*' $REPORT_PATH | grep -oP 'line-rate="\K[^"]+')
-        LINE_COVERAGE=$(echo "$LINE_COVERAGE * 100" | bc)
-
-        if (( $(echo "$LINE_COVERAGE < $coverageThreshold" | bc -l) )); then
-          echo "Line Coverage is below threshold"
-          exit 1
-        fi
+        path: 'MvcMovieTests/TestResults/test-results.trx'
   
     - name: Publish Code Coverage Results
       uses: actions/upload-artifact@v4
       with:
         name: code-coverage
-        path: '**/coverage.cobertura.xml'
+        path: 'MvcMovieTests/coverage/coverage.cobertura.xml'
 
-    - name: Check for vulnerable packages
+    - name: Check Vulnerable Packages
       run: |
-        dotnet list package --vulnerable > vulnerability_report.txt
-
-        if grep -q "Severity: High\|Severity: Critical" vulnerability_report.txt; then
-          echo "High or Critical vulnerabilities found!"
-          cat vulnerability_report.txt
-          exit 1
-        elif grep -q "Severity: Moderate" vulnerability_report.txt; then
-          echo "Moderate vulnerabilities found, but proceeding."
-          cat vulnerability_report.txt
+        dotnet list package --vulnerable --format json > vulnerabilities.json
+        vulnerable_packages=$(jq -r '[.projects[].frameworks[]?.topLevelPackages[]?.vulnerabilities // []] | add' vulnerabilities.json)
+        if [ -z "$vulnerable_packages" ] || [ "$vulnerable_packages" = "null" ]; then
+            echo "No vulnerable packages found."
         else
-          echo "No high or critical vulnerabilities found."
+            high_severity_count=$(echo "$vulnerable_packages" | jq -r '[.[] | select(.severity == "High")] | length')
+            if [ "$high_severity_count" -gt 0 ]; then
+                echo "##[error]High severity vulnerabilities found: $high_severity_count"
+                exit 1
+            else
+                echo "No high severity vulnerabilities found."
+            fi
         fi
-    
-    # Roslynの解析は専用のコマンドがない。dotnet build で解析も行う。
-    - name: Roslyn Analysis(Build)
-      run: dotnet build MvcMovie/MvcMovie.csproj
 
+    - name: Publish
+      run: dotnet publish MvcMovie/MvcMovie.csproj --configuration Release --output ./publish --no-build
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: publish
+        path: ./publish
+
+  cd:
+    runs-on: windows-latest
+    needs: ci
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: publish
+
+    # - name: Deploy to Azure Web App (Develop)
+    #   uses: azure/webapps-deploy@v3
+    #   with:
+    #     app-name: 'YOUR_APP_SERVICE_NAME_DEVELOP'
+    #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_DEVELOP }}
+    #     package: ./publish

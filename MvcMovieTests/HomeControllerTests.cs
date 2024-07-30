@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using MvcMovie.Controllers;
 using MvcMovie.Data;
 using MvcMovie.Models;
+using System.Globalization;
 using Xunit;
 
 namespace MvcMovie.Tests
@@ -17,17 +17,19 @@ namespace MvcMovie.Tests
             string? env = Environment.GetEnvironmentVariable("sqlOptions");
             if (env == null)
             {
-                _context = new MvcMovieContext(new DbContextOptionsBuilder<MvcMovieContext>().UseSqlite("Data Source=MvcMovie.db").Options);
-            } else
+                this._context = new MvcMovieContext(new DbContextOptionsBuilder<MvcMovieContext>().UseSqlite("Data Source=MvcMovie.db").Options);
+            }
+            else
             {
-                _context = new MvcMovieContext(new DbContextOptionsBuilder<MvcMovieContext>().UseSqlServer(env).Options);
-            }            
+                this._context = new MvcMovieContext(new DbContextOptionsBuilder<MvcMovieContext>().UseSqlServer(env).Options);
+            }
         }
 
         [Fact]
         public void Index_ReturnsAViewResult()
         {
-            _context.Database.EnsureCreated();
+            this._context.Database.EnsureDeleted();
+            this._context.Database.EnsureCreated();
 
             // Arrange
             var controller = new HomeController();
@@ -35,7 +37,7 @@ namespace MvcMovie.Tests
             var addMovie = new Movie
             {
                 Title = "TEST MOVIE 1",
-                ReleaseDate = DateTime.Parse("1989-2-12"),
+                ReleaseDate = DateTime.Parse("1989-2-12", new CultureInfo("en-US")),
                 Genre = "Romantic Comedy",
                 Price = 7.99M,
                 Rating = "R"
@@ -51,12 +53,12 @@ namespace MvcMovie.Tests
             // Assert
             Assert.IsType<ViewResult>(result);
             Assert.Equal("TEST MOVIE 1", movieResult.Title);
-            Assert.Equal(DateTime.Parse("1989-2-12"), movieResult.ReleaseDate);
+            Assert.Equal(DateTime.Parse("1989-2-12", new CultureInfo("en-US")), movieResult.ReleaseDate);
             Assert.Equal("Romantic Comedy", movieResult.Genre);
             Assert.Equal(7.99M, movieResult.Price);
             Assert.Equal("R", movieResult.Rating);
 
-            _context.Database.EnsureDeleted();
+            this._context.Database.EnsureDeleted();
         }
     }
 }
