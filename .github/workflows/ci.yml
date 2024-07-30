@@ -88,3 +88,30 @@ jobs:
                 echo "No high severity vulnerabilities found."
             fi
         fi
+
+    - name: Publish
+      run: dotnet publish MvcMovie/MvcMovie.csproj --configuration Release --output ./publish --no-build
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: publish
+        path: ./publish
+
+  cd:
+    runs-on: windows-latest
+    needs: ci
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: publish
+
+    # - name: Deploy to Azure Web App (Develop)
+    #   uses: azure/webapps-deploy@v3
+    #   with:
+    #     app-name: 'YOUR_APP_SERVICE_NAME_DEVELOP'
+    #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_DEVELOP }}
+    #     package: ./publish
